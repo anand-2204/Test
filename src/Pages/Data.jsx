@@ -46,18 +46,27 @@ const ChevronDown = () => (
     <path d="M6 9l6 6 6-6"/>
   </svg>
 );
+// Drag handle icon (6 dots)
+const DragIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+    <circle cx="9"  cy="5"  r="1.5"/>
+    <circle cx="15" cy="5"  r="1.5"/>
+    <circle cx="9"  cy="12" r="1.5"/>
+    <circle cx="15" cy="12" r="1.5"/>
+    <circle cx="9"  cy="19" r="1.5"/>
+    <circle cx="15" cy="19" r="1.5"/>
+  </svg>
+);
 
 /* ─── Constants ─────────────────────────────────────── */
-const PAGE_SIZE  = 10;
-const allColumns = data.length ? Object.keys(data[0]) : [];
+const PAGE_SIZE     = 10;
+const defaultCols   = data.length ? Object.keys(data[0]) : [];
 
-// Get unique values for a column (max 100)
 const getUniqueValues = (col) => {
   const vals = [...new Set(data.map(r => String(r[col] ?? '')).filter(Boolean))];
   return vals.sort().slice(0, 100);
 };
 
-// useOutsideClick
 const useOutsideClick = (refs, cb) => {
   useEffect(() => {
     const handler = (e) => {
@@ -68,20 +77,29 @@ const useOutsideClick = (refs, cb) => {
   }, []);
 };
 
-/* ─── Main Component ─────────────────────────────────── */
+/* ─── Main Component ──────────────────────────────────── */
 const Data = () => {
-  const [searchTerm,      setSearchTerm]      = useState('');
+  // columnOrder = ordered list of ALL column keys
+  const [columnOrder,     setColumnOrder]     = useState(defaultCols);
+  // visibleCols = which columns are checked
   const [visibleCols,     setVisibleCols]      = useState(() =>
-    Object.fromEntries(allColumns.map(c => [c, true]))
+    Object.fromEntries(defaultCols.map(c => [c, true]))
   );
   const [showColPanel,    setShowColPanel]     = useState(false);
+
+  const [searchTerm,      setSearchTerm]       = useState('');
   const [currentPage,     setCurrentPage]      = useState(1);
 
-  // Simple filter: { col, value } pairs — one per column max
-  const [activeFilters,   setActiveFilters]    = useState({}); // { colName: value }
+  const [activeFilters,   setActiveFilters]    = useState({});
   const [showFilterPanel, setShowFilterPanel]  = useState(false);
   const [draftFilters,    setDraftFilters]     = useState({});
-  const [filterSearch,    setFilterSearch]     = useState(''); // search inside filter panel
+  const [filterSearch,    setFilterSearch]     = useState('');
+
+  // Drag state inside column panel
+  const dragItem      = useRef(null); // index being dragged
+  const dragOverItem  = useRef(null); // index being hovered
+  const [dragOverIdx, setDragOverIdx] = useState(null);
+  const [dragging,    setDragging]    = useState(false);
 
   const colPanelRef    = useRef(null);
   const colBtnRef      = useRef(null);
@@ -90,16 +108,17 @@ const Data = () => {
 
   useOutsideClick([colPanelRef, colBtnRef],       () => setShowColPanel(false));
   useOutsideClick([filterPanelRef, filterBtnRef], () => setShowFilterPanel(false));
-
   useEffect(() => { setCurrentPage(1); }, [searchTerm, activeFilters]);
 
-  /* ── Filtered data ── */
+  // activeColumns = columns that are visible, in current drag order
+  const activeColumns = columnOrder.filter(c => visibleCols[c]);
+
+  /* ── Filtered / paged data ── */
   const filteredTasks = data.filter(task => {
     const matchSearch = !searchTerm || Object.values(task).some(v =>
       String(v).toLowerCase().includes(searchTerm.toLowerCase())
     );
     if (!matchSearch) return false;
-
     return Object.entries(activeFilters).every(([col, val]) =>
       !val || String(task[col] ?? '').toLowerCase() === val.toLowerCase()
     );
@@ -108,14 +127,48 @@ const Data = () => {
   const totalPages = Math.max(1, Math.ceil(filteredTasks.length / PAGE_SIZE));
   const safePage   = Math.min(currentPage, totalPages);
   const pagedTasks = filteredTasks.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
-
   const activeFilterCount = Object.values(activeFilters).filter(Boolean).length;
 
   /* ── Column helpers ── */
   const toggleCol   = c => setVisibleCols(p => ({ ...p, [c]: !p[c] }));
-  const selectAll   = () => setVisibleCols(Object.fromEntries(allColumns.map(c => [c, true])));
-  const deselectAll = () => setVisibleCols(Object.fromEntries(allColumns.map(c => [c, false])));
-  const activeColumns = allColumns.filter(c => visibleCols[c]);
+  const selectAll   = () => setVisibleCols(Object.fromEntries(defaultCols.map(c => [c, true])));
+  const deselectAll = () => setVisibleCols(Object.fromEntries(defaultCols.map(c => [c, false])));
+  const resetOrder  = () => setColumnOrder(defaultCols);
+
+  /* ── Drag handlers ── */
+  const onDragStart = (e, index) => {
+    dragItem.current = index;
+    setDragging(true);
+    e.dataTransfer.effectAllowed = 'move';
+    // Transparent ghost
+    const ghost = document.createElement('div');
+    ghost.style.position = 'absolute';
+    ghost.style.top = '-9999px';
+    document.body.appendChild(ghost);
+    e.dataTransfer.setDragImage(ghost, 0, 0);
+    setTimeout(() => document.body.removeChild(ghost), 0);
+  };
+
+  const onDragEnter = (e, index) => {
+    dragOverItem.current = index;
+    setDragOverIdx(index);
+  };
+
+  const onDragEnd = () => {
+    if (dragItem.current !== null && dragOverItem.current !== null &&
+        dragItem.current !== dragOverItem.current) {
+      const newOrder = [...columnOrder];
+      const dragged  = newOrder.splice(dragItem.current, 1)[0];
+      newOrder.splice(dragOverItem.current, 0, dragged);
+      setColumnOrder(newOrder);
+    }
+    dragItem.current     = null;
+    dragOverItem.current = null;
+    setDragOverIdx(null);
+    setDragging(false);
+  };
+
+  const onDragOver = (e) => { e.preventDefault(); };
 
   /* ── Filter helpers ── */
   const openFilterPanel = () => {
@@ -123,24 +176,11 @@ const Data = () => {
     setFilterSearch('');
     setShowFilterPanel(true);
   };
+  const applyFilters    = () => { setActiveFilters({ ...draftFilters }); setShowFilterPanel(false); };
+  const clearAllFilters = () => { setActiveFilters({}); setDraftFilters({}); setShowFilterPanel(false); };
+  const removeSingleFilter = (col) => setActiveFilters(p => { const n={...p}; delete n[col]; return n; });
 
-  const applyFilters = () => {
-    setActiveFilters({ ...draftFilters });
-    setShowFilterPanel(false);
-  };
-
-  const clearAllFilters = () => {
-    setActiveFilters({});
-    setDraftFilters({});
-    setShowFilterPanel(false);
-  };
-
-  const removeSingleFilter = (col) => {
-    setActiveFilters(p => { const n = { ...p }; delete n[col]; return n; });
-  };
-
-  // Columns shown inside filter panel (searchable)
-  const filteredCols = allColumns.filter(c =>
+  const filteredCols = defaultCols.filter(c =>
     c.toLowerCase().includes(filterSearch.toLowerCase())
   );
 
@@ -197,7 +237,7 @@ const Data = () => {
           )}
         </div>
 
-        {/* ── Filter button + panel ── */}
+        {/* Filter */}
         <div className="filter-btn-wrap" ref={filterBtnRef}>
           <button
             className={`btn-filter ${showFilterPanel || activeFilterCount > 0 ? 'active' : ''}`}
@@ -213,16 +253,10 @@ const Data = () => {
 
           {showFilterPanel && (
             <div className="filter-panel" ref={filterPanelRef}>
-
-              {/* Panel header */}
               <div className="filter-panel-header">
                 <span className="filter-panel-title">🎯 Filter by column</span>
-                <button className="fp-clear-btn" onClick={clearAllFilters}>
-                  Reset all
-                </button>
+                <button className="fp-clear-btn" onClick={clearAllFilters}>Reset all</button>
               </div>
-
-              {/* Column search */}
               <div className="fp-col-search">
                 <SearchIcon />
                 <input
@@ -232,8 +266,6 @@ const Data = () => {
                   onChange={e => setFilterSearch(e.target.value)}
                 />
               </div>
-
-              {/* Filter rows — one per column */}
               <div className="fp-rows">
                 {filteredCols.map(col => {
                   const uniqueVals = getUniqueValues(col);
@@ -245,38 +277,26 @@ const Data = () => {
                         <select
                           className="fp-select"
                           value={selected}
-                          onChange={e => setDraftFilters(p => ({
-                            ...p,
-                            [col]: e.target.value
-                          }))}
+                          onChange={e => setDraftFilters(p => ({ ...p, [col]: e.target.value }))}
                         >
                           <option value="">— Any —</option>
-                          {uniqueVals.map(v => (
-                            <option key={v} value={v}>{v}</option>
-                          ))}
+                          {uniqueVals.map(v => <option key={v} value={v}>{v}</option>)}
                         </select>
                         {selected && (
                           <button
                             className="fp-clear-single"
                             onClick={() => setDraftFilters(p => { const n={...p}; delete n[col]; return n; })}
-                            title="Clear"
-                          >
-                            <XIcon size={10}/>
-                          </button>
+                          ><XIcon size={10}/></button>
                         )}
                       </div>
                     </div>
                   );
                 })}
-                {filteredCols.length === 0 && (
-                  <p className="fp-no-cols">No columns match your search.</p>
-                )}
+                {filteredCols.length === 0 && <p className="fp-no-cols">No columns match.</p>}
               </div>
-
-              {/* Footer */}
               <div className="filter-panel-footer">
                 <span className="fp-footer-hint">
-                  {Object.values(draftFilters).filter(Boolean).length} filter{Object.values(draftFilters).filter(Boolean).length !== 1 ? 's' : ''} selected
+                  {Object.values(draftFilters).filter(Boolean).length} filter(s) selected
                 </span>
                 <div className="fp-footer-actions">
                   <button className="btn-clear-filter" onClick={clearAllFilters}>Clear</button>
@@ -287,7 +307,7 @@ const Data = () => {
           )}
         </div>
 
-        {/* Columns button */}
+        {/* ── Columns button + drag panel ── */}
         <div className="col-btn-wrap" ref={colBtnRef}>
           <button
             className={`btn-columns ${showColPanel ? 'active' : ''}`}
@@ -295,30 +315,61 @@ const Data = () => {
           >
             <ColumnsIcon />
             Columns
-            {activeColumns.length < allColumns.length && (
-              <span className="col-badge">{activeColumns.length}/{allColumns.length}</span>
+            {activeColumns.length < defaultCols.length && (
+              <span className="col-badge">{activeColumns.length}/{defaultCols.length}</span>
             )}
           </button>
 
           {showColPanel && (
             <div className="col-panel" ref={colPanelRef}>
               <div className="col-panel-header">
-                <span>Toggle Columns</span>
+                <span>Columns &amp; Order</span>
                 <div className="col-panel-actions">
                   <button onClick={selectAll}>All</button>
                   <button onClick={deselectAll}>None</button>
+                  <button onClick={resetOrder} title="Reset order">↺ Reset</button>
                 </div>
               </div>
-              <div className="col-panel-list">
-                {allColumns.map(col => (
-                  <label key={col} className="col-check-item">
-                    <input
-                      type="checkbox"
-                      checked={!!visibleCols[col]}
-                      onChange={() => toggleCol(col)}
-                    />
-                    <span className="col-check-label">{col}</span>
-                  </label>
+
+              <div className="col-panel-hint">
+                <span>☑ toggle</span>
+                <span>⠿ drag to reorder</span>
+              </div>
+
+              <div className={`col-panel-list ${dragging ? 'is-dragging' : ''}`}>
+                {columnOrder.map((col, index) => (
+                  <div
+                    key={col}
+                    className={[
+                      'col-drag-item',
+                      !visibleCols[col] ? 'col-drag-item--hidden' : '',
+                      dragOverIdx === index && dragItem.current !== index ? 'col-drag-item--over' : '',
+                      dragItem.current === index ? 'col-drag-item--dragging' : '',
+                    ].filter(Boolean).join(' ')}
+                    draggable
+                    onDragStart={e => onDragStart(e, index)}
+                    onDragEnter={e => onDragEnter(e, index)}
+                    onDragOver={onDragOver}
+                    onDragEnd={onDragEnd}
+                  >
+                    {/* Drag handle */}
+                    <span className="drag-handle" title="Drag to reorder">
+                      <DragIcon />
+                    </span>
+
+                    {/* Checkbox */}
+                    <label className="col-check-label-wrap">
+                      <input
+                        type="checkbox"
+                        checked={!!visibleCols[col]}
+                        onChange={() => toggleCol(col)}
+                      />
+                      <span className="col-check-label">{col}</span>
+                    </label>
+
+                    {/* Order index badge */}
+                    <span className="col-order-badge">{index + 1}</span>
+                  </div>
                 ))}
               </div>
             </div>
@@ -335,9 +386,7 @@ const Data = () => {
       {/* Active filter tags */}
       {activeFilterCount > 0 && (
         <div className="active-filter-bar">
-          <span className="active-filter-label">
-            <FilterIcon /> Active:
-          </span>
+          <span className="active-filter-label"><FilterIcon /> Active:</span>
           <div className="active-filter-tags">
             {Object.entries(activeFilters).filter(([,v]) => v).map(([col, val]) => (
               <span key={col} className="filter-tag">
