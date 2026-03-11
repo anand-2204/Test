@@ -3,6 +3,9 @@ import * as XLSX from 'xlsx';
 import '../asset/data.css';
 import data from "../asset/data.json";
 import { useTheme } from '../context/ThemeContect';
+
+
+
 /* ─── Icons ─────────────────────────────────────────── */
 const SearchIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="16" height="16">
@@ -122,7 +125,13 @@ const MoonIcon = () => (
     <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
   </svg>
 );
-
+const StatsIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15">
+    <line x1="18" y1="20" x2="18" y2="10"/>
+    <line x1="12" y1="20" x2="12" y2="4"/>
+    <line x1="6"  y1="20" x2="6"  y2="14"/>
+  </svg>
+);
 
 /* ─── Constants ─────────────────────────────────────── */
 const defaultCols = data.length ? Object.keys(data[0]) : [];
@@ -134,6 +143,60 @@ const LS_KEYS = {
   columnOrder:   'datatable_columnOrder',
   visibleCols:   'datatable_visibleCols',
   pageSize:      'datatable_pageSize',
+};
+/* ─── Highlight matching text ────────────────────────── */
+const Highlight = ({ text, query }) => {
+  // If no search query, just return plain text
+  if (!query || !query.trim()) return <>{String(text ?? '')}</>;
+
+  const str   = String(text ?? '');
+  const lower = str.toLowerCase();
+  const q     = query.toLowerCase().trim();
+  const index = lower.indexOf(q);
+
+  // If no match found in this cell, return plain text
+  if (index === -1) return <>{str}</>;
+
+  // Split text into 3 parts: before match, the match, after match
+  const before = str.slice(0, index);
+  const match  = str.slice(index, index + q.length);
+  const after  = str.slice(index + q.length);
+
+  return (
+    <>
+      {before}
+      <mark className="search-highlight">{match}</mark>
+      {after}
+    </>
+  );
+};
+
+/* ─── Column statistics ──────────────────────────────── */
+const getNumericCols = (cols) =>
+  cols.filter(col =>
+    data.some(row => {
+      const v = parseFloat(row[col]);
+      return !isNaN(v) && row[col] !== '' && row[col] !== null;
+    })
+  );
+
+const getColStats = (col, rows) => {
+  const nums = rows.map(r => parseFloat(r[col])).filter(v => !isNaN(v));
+  if (nums.length === 0) return null;
+  const sum = nums.reduce((a, b) => a + b, 0);
+  return {
+    count: nums.length,
+    sum:   sum,
+    avg:   sum / nums.length,
+    min:   Math.min(...nums),
+    max:   Math.max(...nums),
+  };
+};
+
+const fmt = (n) => {
+  if (n === undefined || n === null) return '—';
+  if (Number.isInteger(n)) return n.toLocaleString();
+  return parseFloat(n.toFixed(2)).toLocaleString();
 };
 
 const lsGet = (key, fallback) => {
@@ -289,7 +352,8 @@ const { isDark, toggleTheme } = useTheme();
   const [editingFilter,   setEditingFilter]   = useState(null);
   const [newFilterName,   setNewFilterName]   = useState('');
   const [showNameError,   setShowNameError]   = useState(false);
-
+  const [statsOpen, setStatsOpen] = useState(false);
+  const [activeStatCol, setActiveStatCol] = useState(null);
   /* ── 3. Sort state ── */
   const [sortCol, setSortCol] = useState(null);
   const [sortDir, setSortDir] = useState('asc');
@@ -327,6 +391,8 @@ const { isDark, toggleTheme } = useTheme();
   const activeColumns     = columnOrder.filter(c => visibleCols[c]);
   const activeFilterCount = Object.values(activeFilters).filter(Boolean).length;
   const draftFilterCount  = Object.values(draftFilters).filter(Boolean).length;
+  const numericCols = getNumericCols(activeColumns);
+
 
   /* ── Filtered data ── */
   const filteredTasks = useMemo(() => data.filter(task => {
@@ -713,6 +779,18 @@ const { isDark, toggleTheme } = useTheme();
             </div>
           )}
         </div>
+              
+      {/* Stats toggle */}
+      {numericCols.length > 0 && (
+        <button
+          className={`btn-stats ${statsOpen ? 'active' : ''}`}
+          onClick={() => { setStatsOpen(p => !p); setActiveStatCol(numericCols[0]); }}
+        >
+          <StatsIcon />
+          Stats
+          {statsOpen && <span className="stats-badge">{numericCols.length}</span>}
+        </button>
+      )}
 
         {/* Download */}
         <button className="btn-download" onClick={handleDownload}>
@@ -741,6 +819,73 @@ const { isDark, toggleTheme } = useTheme();
           <button className="clear-all-tag" onClick={clearAllFilters}>Clear all</button>
         </div>
       )}
+       
+       {/* Statistics bar */}
+{statsOpen && numericCols.length > 0 && (() => {
+  const col   = activeStatCol || numericCols[0];
+  const stats = getColStats(col, filteredTasks);
+  return (
+    <div className="stats-bar">
+
+      {/* Column selector tabs */}
+      <div className="stats-col-tabs">
+        <span className="stats-bar-label"><StatsIcon /> Stats:</span>
+        <div className="stats-tabs-scroll">
+          {numericCols.map(c => (
+            <button
+              key={c}
+              className={`stats-tab ${(activeStatCol || numericCols[0]) === c ? 'stats-tab--active' : ''}`}
+              onClick={() => setActiveStatCol(c)}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Stat cards */}
+     {/* Stat cards */}
+{stats ? (
+  <div className="stats-cards">
+    <div className="stats-card">
+      <span className="stats-card-label">Count</span>
+      <span className="stats-card-value">{fmt(stats.count)}</span>
+      <span className="stats-card-sub">rows with a value</span>
+    </div>
+    <div className="stats-card stats-card--sum">
+      <span className="stats-card-label">Sum</span>
+      <span className="stats-card-value">{fmt(stats.sum)}</span>
+      <span className="stats-card-sub">all values added</span>
+    </div>
+    <div className="stats-card stats-card--avg">
+      <span className="stats-card-label">Average</span>
+      <span className="stats-card-value">{fmt(stats.avg)}</span>
+      <span className="stats-card-sub">sum ÷ count</span>
+    </div>
+    <div className="stats-card stats-card--min">
+      <span className="stats-card-label">Min</span>
+      <span className="stats-card-value">{fmt(stats.min)}</span>
+      <span className="stats-card-sub">smallest value</span>
+    </div>
+    <div className="stats-card stats-card--max">
+      <span className="stats-card-label">Max</span>
+      <span className="stats-card-value">{fmt(stats.max)}</span>
+      <span className="stats-card-sub">largest value</span>
+    </div>
+    <div className="stats-card stats-card--rows">
+      <span className="stats-card-label">Filtered rows</span>
+      <span className="stats-card-value">{filteredTasks.length}</span>
+      <span className="stats-card-sub">matching current filter</span>
+    </div>
+  </div>
+) : (
+  <span className="stats-no-data">No numeric data in this column</span>
+)}
+
+    </div>
+  );
+})()}
+
 
       {/* Sort indicator */}
       {sortCol && (
@@ -832,11 +977,13 @@ const { isDark, toggleTheme } = useTheme();
                         className="td-clickable"
                         title="Click to view details"
                       >
-                        {(isStatusColumn(col) || isPriorityColumn(col)) && task[col] ? (
-                          <span className={`cell-badge cell-badge--${String(task[col]).toLowerCase().replace(/\s+/g, '-')}`}>
-                            {task[col]}
-                          </span>
-                        ) : task[col]}
+                       {(isStatusColumn(col) || isPriorityColumn(col)) && task[col] ? (
+                      <span className={`cell-badge cell-badge--${String(task[col]).toLowerCase().replace(/\s+/g, '-')}`}>
+                        <Highlight text={task[col]} query={searchTerm} />
+                      </span>
+                    ) : (
+                      <Highlight text={task[col]} query={searchTerm} />
+                    )}
                       </td>
                     ))}
                   </tr>
