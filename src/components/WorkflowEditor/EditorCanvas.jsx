@@ -5,7 +5,8 @@ import {
   Controls,
   MiniMap,
   reconnectEdge,
-  BackgroundVariant
+  BackgroundVariant,
+  useReactFlow
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,6 +28,7 @@ const EditorCanvas = ({
   setEdges
 }) => {
   const reactFlowWrapper = useRef(null);
+  const { screenToFlowPosition } = useReactFlow();
   const edgeReconnectSuccessful = useRef(true);
 
   const onReconnectStart = useCallback(() => {
@@ -63,13 +65,17 @@ const EditorCanvas = ({
 
       const nodeData = JSON.parse(nodeDataRaw);
 
-      // We need to map screen coordinates to flow coordinates, 
-      // but react flow handles this internally now with screenToFlowPosition if we had the hook,
-      // Here's a simpler approximation using bounds for now
-      const position = {
-        x: event.clientX - reactFlowBounds.left - 100, // rough center offset
-        y: event.clientY - reactFlowBounds.top - 40,
-      };
+      // Use the provided screenToFlowPosition hook to get perfectly accurate coordinates 
+      // considering the current zoom and pan level
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      // Shift the initial position slightly so the drop target is near the center of the node, 
+      // rather than the top-left corner. Nodes are approx 220px wide and 80px high
+      position.x -= 110; 
+      position.y -= 40;
 
       const newNode = {
         id: uuidv4(),

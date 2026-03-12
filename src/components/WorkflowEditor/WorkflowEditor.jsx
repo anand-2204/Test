@@ -18,6 +18,7 @@ const WorkflowEditor = () => {
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge({
       ...params,
+      type: 'smoothstep',
       animated: true,
       style: { stroke: '#94a3b8', strokeWidth: 3 },
       markerEnd: {
