@@ -1,12 +1,21 @@
 import Data from "./Pages/Data"
-
+import WorkflowEditor from "./components/WorkflowEditor/WorkflowEditor"
+import { BrowserRouter, Routes, Route } from "react-router"
 function App() {
-  
+
 
   return (
     <>
-      
-        <Data />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Data />} />
+          <Route path="/workflow" element={<WorkflowEditor />} />
+
+
+
+        </Routes>
+      </BrowserRouter>
+
     </>
   )
 }
