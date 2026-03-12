@@ -13,6 +13,17 @@ import {
 export const WORKFLOW_ITEMS = {
     tasks: [
         {
+            id: 'task-timer-started',
+            type: 'task',
+            title: 'Timer',
+            description: 'Triggered when a timer starts',
+            icon: Clock,
+            color: '#f41010ff',
+            defaultData: {
+                duration: 5,        // Timer duration in minutes
+            }
+        },
+        {
             id: 'task-gr-created',
             type: 'task',
             title: 'GR Created',
