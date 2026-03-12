@@ -1,6 +1,6 @@
 import Data from "./Pages/Data"
 import WorkflowEditor from "./components/WorkflowEditor/WorkflowEditor"
-import { BrowserRouter, Routes, Route } from "react-router"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 function App() {
 
 
