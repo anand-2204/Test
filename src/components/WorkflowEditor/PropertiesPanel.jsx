@@ -2,8 +2,10 @@ import React from 'react';
 import { WORKFLOW_ITEMS } from '../../constants/workflowConfig';
 import { Trash2 } from 'lucide-react';
 import './WorkflowEditor.css';
+import { useState } from 'react';
 
 const PropertiesPanel = ({ selectedNode, updateNodeData, deleteNode }) => {
+  const [isPaused, setIsPaused] = useState(false);
   if (!selectedNode) {
     return (
       <aside className="properties-panel empty">
@@ -22,11 +24,8 @@ const PropertiesPanel = ({ selectedNode, updateNodeData, deleteNode }) => {
   const Icon = originalItem ? originalItem.icon : null;
 
   const handleDataChange = (key, value) => {
-    if (value < 300) {
-      updateNodeData(id, { ...data, defaultData: { ...data.defaultData, [key]: value } });
-    } else {
-      alert("Duration value can not be more than 300 minutes.!!")
-    }
+
+    updateNodeData(id, { ...data, defaultData: { ...data.defaultData, [key]: value } });
   };
 
   const renderProperties = () => {
@@ -68,8 +67,12 @@ const PropertiesPanel = ({ selectedNode, updateNodeData, deleteNode }) => {
     });
   };
 
-  // renderTimerProperties
 
+  // handleTimerToggle
+  const handleTimerToggle = () => {
+    setIsPaused(prev => !prev);
+  }
+  // renderTimerProperties
   const renderTimerProperties = () => {
 
 
@@ -87,6 +90,9 @@ const PropertiesPanel = ({ selectedNode, updateNodeData, deleteNode }) => {
     const totalSeconds = value * 60;
     const hours = Math.floor(value / 60);
     const minutes = value % 60;
+
+
+
 
     return (
       <div className="timer-config">
@@ -111,25 +117,6 @@ const PropertiesPanel = ({ selectedNode, updateNodeData, deleteNode }) => {
             {hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`} · {totalSeconds}s
           </span>
         </div>
-
-        {/* <div className="timer-slider-wrapper">
-          <input
-            type="range"
-            id={`${key}-range`}
-            min={1}
-            max={120}
-            value={value}
-            onChange={(e) => handleDataChange(key, Number(e.target.value))}
-            className="timer-slider"
-          />
-          <div className="slider-ticks">
-            <span>1m</span>
-            <span>30m</span>
-            <span>60m</span>
-            <span>2h</span>
-          </div>
-        </div> */}
-
         <div className="timer-stepper">
 
           <input
@@ -138,9 +125,9 @@ const PropertiesPanel = ({ selectedNode, updateNodeData, deleteNode }) => {
             value={value}
             min={1}
             max={120}
-            // onChange={(e) => handleDataChange(key, Number(e.target.value))}
+
             onChange={(e) => {
-              const val = Math.min(120, Math.max(1, Number(e.target.value))); // clamp 1–120
+              const val = Math.min(120, Math.max(1, Number(e.target.value)));
               handleDataChange(key, val);
             }}
             className="stepper-input"
@@ -166,7 +153,11 @@ const PropertiesPanel = ({ selectedNode, updateNodeData, deleteNode }) => {
         </p>
         <div>
 
-          <button className='timer-pause'>Pause</button>
+          <button className={`timer-pause ${isPaused ? 'resumed' : ' '}`}
+            onClick={handleTimerToggle}
+          >
+            {isPaused ? 'Resume' : 'Pause'}
+          </button>
         </div>
       </div>
     );
@@ -196,7 +187,7 @@ const PropertiesPanel = ({ selectedNode, updateNodeData, deleteNode }) => {
         <div className="property-section meta-section">
           <h4>Metadata</h4>
 
-          {console.log("Data==", data)}
+
 
           <div className="meta-info">
             <span className="meta-label">ID:</span>
