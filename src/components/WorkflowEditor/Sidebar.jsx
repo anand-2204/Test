@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { WORKFLOW_ITEMS } from '../../constants/workflowConfig';
+import { History } from 'lucide-react';
 import './WorkflowEditor.css';
 
-const Sidebar = () => {
+const Sidebar = ({ onToggleHistory }) => {
   const [activeTab, setActiveTab] = useState('tasks');
 
   const onDragStart = (event, item) => {
@@ -45,6 +46,9 @@ const Sidebar = () => {
     <aside className="workflow-sidebar">
       <div className="sidebar-header">
         <h3>Nodes Library</h3>
+        <button className="history-toggle-btn" onClick={onToggleHistory} title="Execution History">
+          <History size={18} />
+        </button>
       </div>
       
       <div className="sidebar-tabs">
