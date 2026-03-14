@@ -6,12 +6,12 @@ import {
   useEdgesState,
   MarkerType
 } from '@xyflow/react';
-import Sidebar from './Sidebar';
-import PropertiesPanel from './PropertiesPanel';
-import EditorCanvas from './EditorCanvas';
-import HistorySidebar from './HistorySidebar';
-import HistoryDetailPanel from './HistoryDetailPanel';
-import './WorkflowEditor.css';
+import Sidebar from '../components/WorkflowEditor/Sidebar';
+import PropertiesPanel from '../components/WorkflowEditor/PropertiesPanel';
+import EditorCanvas from '../components/WorkflowEditor/EditorCanvas';
+import HistorySidebar from '../components/WorkflowEditor/HistorySidebar';
+import HistoryDetailPanel from '../components/WorkflowEditor/HistoryDetailPanel';
+import '../components/WorkflowEditor/WorkflowEditor.css';
 
 const WorkflowEditor = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);

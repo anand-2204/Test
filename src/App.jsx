@@ -1,7 +1,7 @@
 import Data from "./Pages/Data"
-import WorkflowEditor from "./components/WorkflowEditor/WorkflowEditor"
+import WorkflowEditor from "./Pages/WorkflowEditor"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-
+import GpsRecord from "./Pages/GpsRecord"
 
 
 
@@ -14,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Data />} />
           <Route path="/workflow" element={<WorkflowEditor />} />
+          <Route path="/gpsrecord" element={<GpsRecord />} />
 
 
 

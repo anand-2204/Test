@@ -2,119 +2,119 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import * as XLSX from 'xlsx';
 import '../asset/data.css';
 import data from "../asset/data.json";
-import { useTheme } from '../context/ThemeContect';
-
+import { useTheme } from '../globalContext/context/ThemeContect';
+import { jsxDEV } from "react/jsx-dev-runtime";
 
 
 /* ─── Icons ─────────────────────────────────────────── */
 const SearchIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="16" height="16">
-    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+    <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
   </svg>
 );
 const ColumnsIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15">
-    <rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/>
+    <rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="3" width="7" height="18" rx="1" />
   </svg>
 );
 const DownloadIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15">
-    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-    <polyline points="7 10 12 15 17 10"/>
-    <line x1="12" y1="15" x2="12" y2="3"/>
+    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+    <polyline points="7 10 12 15 17 10" />
+    <line x1="12" y1="15" x2="12" y2="3" />
   </svg>
 );
 const ChevronLeft = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
-    <path d="M15 18l-6-6 6-6"/>
+    <path d="M15 18l-6-6 6-6" />
   </svg>
 );
 const ChevronRight = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
-    <path d="M9 18l6-6-6-6"/>
+    <path d="M9 18l6-6-6-6" />
   </svg>
 );
 const FilterIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
-    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
   </svg>
 );
 const XIcon = ({ size = 12 }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width={size} height={size}>
-    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 );
 const ChevronDown = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="13" height="13">
-    <path d="M6 9l6 6 6-6"/>
+    <path d="M6 9l6 6 6-6" />
   </svg>
 );
 const ChevronLeftSm = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="13" height="13">
-    <path d="M15 18l-6-6 6-6"/>
+    <path d="M15 18l-6-6 6-6" />
   </svg>
 );
 const DragIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-    <circle cx="9"  cy="5"  r="1.5"/>
-    <circle cx="15" cy="5"  r="1.5"/>
-    <circle cx="9"  cy="12" r="1.5"/>
-    <circle cx="15" cy="12" r="1.5"/>
-    <circle cx="9"  cy="19" r="1.5"/>
-    <circle cx="15" cy="19" r="1.5"/>
+    <circle cx="9" cy="5" r="1.5" />
+    <circle cx="15" cy="5" r="1.5" />
+    <circle cx="9" cy="12" r="1.5" />
+    <circle cx="15" cy="12" r="1.5" />
+    <circle cx="9" cy="19" r="1.5" />
+    <circle cx="15" cy="19" r="1.5" />
   </svg>
 );
 const SaveIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
-    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-    <polyline points="17 21 17 13 7 13 7 21"/>
-    <polyline points="7 3 7 8 15 8"/>
+    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+    <polyline points="17 21 17 13 7 13 7 21" />
+    <polyline points="7 3 7 8 15 8" />
   </svg>
 );
 const BookmarkIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
-    <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+    <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
   </svg>
 );
 const PlusIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
-    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
   </svg>
 );
 const DefaultIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
-    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
   </svg>
 );
 const SortAscIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
-    <path d="M12 19V5M5 12l7-7 7 7"/>
+    <path d="M12 19V5M5 12l7-7 7 7" />
   </svg>
 );
 const SortDescIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
-    <path d="M12 5v14M5 12l7 7 7-7"/>
+    <path d="M12 5v14M5 12l7 7 7-7" />
   </svg>
 );
 const SortNoneIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12">
-    <path d="M8 9l4-4 4 4M8 15l4 4 4-4" opacity="0.35"/>
+    <path d="M8 9l4-4 4 4M8 15l4 4 4-4" opacity="0.35" />
   </svg>
 );
 const DetailIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
-    <rect x="3" y="3" width="18" height="18" rx="2"/>
-    <path d="M9 9h6M9 12h6M9 15h4"/>
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <path d="M9 9h6M9 12h6M9 15h4" />
   </svg>
 );
 const CheckIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="13" height="13">
-    <polyline points="20 6 9 17 4 12"/>
+    <polyline points="20 6 9 17 4 12" />
   </svg>
 );
 const SunIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15">
-    <circle cx="12" cy="12" r="5"/>
+    <circle cx="12" cy="12" r="5" />
     <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42
              M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
   </svg>
@@ -122,14 +122,14 @@ const SunIcon = () => (
 
 const MoonIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15">
-    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
   </svg>
 );
 const StatsIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15">
-    <line x1="18" y1="20" x2="18" y2="10"/>
-    <line x1="12" y1="20" x2="12" y2="4"/>
-    <line x1="6"  y1="20" x2="6"  y2="14"/>
+    <line x1="18" y1="20" x2="18" y2="10" />
+    <line x1="12" y1="20" x2="12" y2="4" />
+    <line x1="6" y1="20" x2="6" y2="14" />
   </svg>
 );
 
@@ -139,19 +139,19 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 
 /* ─── localStorage helpers ───────────────────────────── */
 const LS_KEYS = {
-  savedFilters:  'datatable_savedFilters',
-  columnOrder:   'datatable_columnOrder',
-  visibleCols:   'datatable_visibleCols',
-  pageSize:      'datatable_pageSize',
+  savedFilters: 'datatable_savedFilters',
+  columnOrder: 'datatable_columnOrder',
+  visibleCols: 'datatable_visibleCols',
+  pageSize: 'datatable_pageSize',
 };
 /* ─── Highlight matching text ────────────────────────── */
 const Highlight = ({ text, query }) => {
   // If no search query, just return plain text
   if (!query || !query.trim()) return <>{String(text ?? '')}</>;
 
-  const str   = String(text ?? '');
+  const str = String(text ?? '');
   const lower = str.toLowerCase();
-  const q     = query.toLowerCase().trim();
+  const q = query.toLowerCase().trim();
   const index = lower.indexOf(q);
 
   // If no match found in this cell, return plain text
@@ -159,8 +159,8 @@ const Highlight = ({ text, query }) => {
 
   // Split text into 3 parts: before match, the match, after match
   const before = str.slice(0, index);
-  const match  = str.slice(index, index + q.length);
-  const after  = str.slice(index + q.length);
+  const match = str.slice(index, index + q.length);
+  const after = str.slice(index + q.length);
 
   return (
     <>
@@ -186,10 +186,10 @@ const getColStats = (col, rows) => {
   const sum = nums.reduce((a, b) => a + b, 0);
   return {
     count: nums.length,
-    sum:   sum,
-    avg:   sum / nums.length,
-    min:   Math.min(...nums),
-    max:   Math.max(...nums),
+    sum: sum,
+    avg: sum / nums.length,
+    min: Math.min(...nums),
+    max: Math.max(...nums),
   };
 };
 
@@ -207,7 +207,7 @@ const lsGet = (key, fallback) => {
 };
 
 const lsSet = (key, value) => {
-  try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch { }
 };
 
 /* ─── Detect column types ────────────────────────────── */
@@ -220,7 +220,7 @@ const isDateColumn = (col) => {
     lower.includes('end') || lower.includes('scheduled') || lower.includes('completed')
   );
 };
-const isStatusColumn   = (col) => { const l = col.toLowerCase(); return l.includes('status') || l === 'state'; };
+const isStatusColumn = (col) => { const l = col.toLowerCase(); return l.includes('status') || l === 'state'; };
 const isPriorityColumn = (col) => { const l = col.toLowerCase(); return l.includes('priority') || l.includes('urgency') || l.includes('severity'); };
 
 const getUniqueValues = (col) => {
@@ -230,15 +230,15 @@ const getUniqueValues = (col) => {
 
 /* ─── Row highlight logic ────────────────────────────── */
 const STATUS_COLORS = {
-  done:'row-green', complete:'row-green', completed:'row-green', closed:'row-green',
-  resolved:'row-green', approved:'row-green', active:'row-green', success:'row-green',
-  overdue:'row-red', blocked:'row-red', failed:'row-red', rejected:'row-red',
-  cancelled:'row-red', canceled:'row-red', urgent:'row-red', high:'row-red', critical:'row-red',
-  pending:'row-orange', 'in progress':'row-orange', inprogress:'row-orange',
-  review:'row-orange', 'in review':'row-orange', hold:'row-orange',
-  onhold:'row-orange', paused:'row-orange', medium:'row-orange',
-  new:'row-blue', open:'row-blue', todo:'row-blue', 'to do':'row-blue',
-  planned:'row-blue', scheduled:'row-blue', low:'row-blue',
+  done: 'row-green', complete: 'row-green', completed: 'row-green', closed: 'row-green',
+  resolved: 'row-green', approved: 'row-green', active: 'row-green', success: 'row-green',
+  overdue: 'row-red', blocked: 'row-red', failed: 'row-red', rejected: 'row-red',
+  cancelled: 'row-red', canceled: 'row-red', urgent: 'row-red', high: 'row-red', critical: 'row-red',
+  pending: 'row-orange', 'in progress': 'row-orange', inprogress: 'row-orange',
+  review: 'row-orange', 'in review': 'row-orange', hold: 'row-orange',
+  onhold: 'row-orange', paused: 'row-orange', medium: 'row-orange',
+  new: 'row-blue', open: 'row-blue', todo: 'row-blue', 'to do': 'row-blue',
+  planned: 'row-blue', scheduled: 'row-blue', low: 'row-blue',
 };
 
 const getRowHighlight = (task) => {
@@ -292,17 +292,16 @@ const DetailPanel = ({ task, onClose }) => {
             <DetailIcon />
             <span>Row Detail</span>
           </div>
-          <button className="detail-close" onClick={onClose}><XIcon size={16}/></button>
+          <button className="detail-close" onClick={onClose}><XIcon size={16} /></button>
         </div>
         <div className="detail-body">
           {Object.entries(task).map(([col, val]) => (
             <div key={col} className="detail-field">
               <span className="detail-field-label">{col}</span>
-              <span className={`detail-field-value ${
-                (isStatusColumn(col) || isPriorityColumn(col)) && val
-                  ? `cell-badge cell-badge--${String(val).toLowerCase().replace(/\s+/g, '-')}`
-                  : ''
-              }`}>
+              <span className={`detail-field-value ${(isStatusColumn(col) || isPriorityColumn(col)) && val
+                ? `cell-badge cell-badge--${String(val).toLowerCase().replace(/\s+/g, '-')}`
+                : ''
+                }`}>
                 {val ?? <span className="detail-empty">—</span>}
               </span>
             </div>
@@ -334,24 +333,24 @@ const Data = () => {
   const [pageSize, setPageSize] = useState(() =>
     lsGet(LS_KEYS.pageSize, 10)
   );
-const { isDark, toggleTheme } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
   /* persist to localStorage whenever these change */
-  useEffect(() => lsSet(LS_KEYS.columnOrder,  columnOrder),  [columnOrder]);
-  useEffect(() => lsSet(LS_KEYS.visibleCols,  visibleCols),  [visibleCols]);
+  useEffect(() => lsSet(LS_KEYS.columnOrder, columnOrder), [columnOrder]);
+  useEffect(() => lsSet(LS_KEYS.visibleCols, visibleCols), [visibleCols]);
   useEffect(() => lsSet(LS_KEYS.savedFilters, savedFilters), [savedFilters]);
-  useEffect(() => lsSet(LS_KEYS.pageSize,     pageSize),     [pageSize]);
+  useEffect(() => lsSet(LS_KEYS.pageSize, pageSize), [pageSize]);
 
   /* ── 2. Regular state ── */
-  const [showColPanel,    setShowColPanel]    = useState(false);
-  const [searchTerm,      setSearchTerm]      = useState('');
-  const [currentPage,     setCurrentPage]     = useState(1);
-  const [activeFilters,   setActiveFilters]   = useState({});
-  const [draftFilters,    setDraftFilters]    = useState({});
-  const [filterSearch,    setFilterSearch]    = useState('');
-  const [filterMode,      setFilterMode]      = useState(null);
-  const [editingFilter,   setEditingFilter]   = useState(null);
-  const [newFilterName,   setNewFilterName]   = useState('');
-  const [showNameError,   setShowNameError]   = useState(false);
+  const [showColPanel, setShowColPanel] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeFilters, setActiveFilters] = useState({});
+  const [draftFilters, setDraftFilters] = useState({});
+  const [filterSearch, setFilterSearch] = useState('');
+  const [filterMode, setFilterMode] = useState(null);
+  const [editingFilter, setEditingFilter] = useState(null);
+  const [newFilterName, setNewFilterName] = useState('');
+  const [showNameError, setShowNameError] = useState(false);
   const [statsOpen, setStatsOpen] = useState(false);
   const [activeStatCol, setActiveStatCol] = useState(null);
   /* ── 3. Sort state ── */
@@ -365,17 +364,17 @@ const { isDark, toggleTheme } = useTheme();
   const [detailTask, setDetailTask] = useState(null);
 
   /* ── Drag state ── */
-  const dragItem     = useRef(null);
+  const dragItem = useRef(null);
   const dragOverItem = useRef(null);
   const [dragItemIdx, setDragItemIdx] = useState(null);
   const [dragOverIdx, setDragOverIdx] = useState(null);
-  const [dragging,    setDragging]    = useState(false);
+  const [dragging, setDragging] = useState(false);
 
   /* ── Refs ── */
-  const colPanelRef    = useRef(null);
-  const colBtnRef      = useRef(null);
+  const colPanelRef = useRef(null);
+  const colBtnRef = useRef(null);
   const filterPanelRef = useRef(null);
-  const filterBtnRef   = useRef(null);
+  const filterBtnRef = useRef(null);
 
   useOutsideClick([colPanelRef, colBtnRef], () => setShowColPanel(false));
   useOutsideClick([filterPanelRef, filterBtnRef], () => {
@@ -388,9 +387,9 @@ const { isDark, toggleTheme } = useTheme();
     setSelectedRows(new Set());
   }, [searchTerm, activeFilters, sortCol, sortDir, pageSize]);
 
-  const activeColumns     = columnOrder.filter(c => visibleCols[c]);
+  const activeColumns = columnOrder.filter(c => visibleCols[c]);
   const activeFilterCount = Object.values(activeFilters).filter(Boolean).length;
-  const draftFilterCount  = Object.values(draftFilters).filter(Boolean).length;
+  const draftFilterCount = Object.values(draftFilters).filter(Boolean).length;
   const numericCols = getNumericCols(activeColumns);
 
 
@@ -422,7 +421,7 @@ const { isDark, toggleTheme } = useTheme();
   }, [filteredTasks, sortCol, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(sortedTasks.length / pageSize));
-  const safePage   = Math.min(currentPage, totalPages);
+  const safePage = Math.min(currentPage, totalPages);
   const pagedTasks = sortedTasks.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   /* ── Sort handler ── */
@@ -438,14 +437,14 @@ const { isDark, toggleTheme } = useTheme();
   };
 
   /* ── Row selection handlers ── */
-  const isAllSelected  = pagedTasks.length > 0 && pagedTasks.every(t => selectedRows.has(t.id ?? JSON.stringify(t)));
+  const isAllSelected = pagedTasks.length > 0 && pagedTasks.every(t => selectedRows.has(t.id ?? JSON.stringify(t)));
   const isSomeSelected = pagedTasks.some(t => selectedRows.has(t.id ?? JSON.stringify(t)));
 
   const toggleSelectAll = () => {
     setSelectedRows(prev => {
       const next = new Set(prev);
       if (isAllSelected) pagedTasks.forEach(t => next.delete(t.id ?? JSON.stringify(t)));
-      else               pagedTasks.forEach(t => next.add(t.id   ?? JSON.stringify(t)));
+      else pagedTasks.forEach(t => next.add(t.id ?? JSON.stringify(t)));
       return next;
     });
   };
@@ -470,10 +469,10 @@ const { isDark, toggleTheme } = useTheme();
   };
 
   /* ── Column helpers ── */
-  const toggleCol   = c => setVisibleCols(p => ({ ...p, [c]: !p[c] }));
-  const selectAll   = () => setVisibleCols(Object.fromEntries(defaultCols.map(c => [c, true])));
+  const toggleCol = c => setVisibleCols(p => ({ ...p, [c]: !p[c] }));
+  const selectAll = () => setVisibleCols(Object.fromEntries(defaultCols.map(c => [c, true])));
   const deselectAll = () => setVisibleCols(Object.fromEntries(defaultCols.map(c => [c, false])));
-  const resetOrder  = () => setColumnOrder(defaultCols);
+  const resetOrder = () => setColumnOrder(defaultCols);
 
   /* ── Drag handlers ── */
   const onDragStart = (e, index) => {
@@ -507,8 +506,8 @@ const { isDark, toggleTheme } = useTheme();
     setDraftFilters({}); setFilterSearch(''); setNewFilterName('');
     setShowNameError(false); setEditingFilter(null); setFilterMode('new');
   };
-  const applyDefault    = () => { setActiveFilters({}); setDraftFilters({}); setFilterMode(null); };
-  const openEditFilter  = (sf) => {
+  const applyDefault = () => { setActiveFilters({}); setDraftFilters({}); setFilterMode(null); };
+  const openEditFilter = (sf) => {
     setDraftFilters({ ...sf.filters }); setFilterSearch('');
     setNewFilterName(sf.name); setShowNameError(false);
     setEditingFilter(sf); setFilterMode('new');
@@ -527,10 +526,10 @@ const { isDark, toggleTheme } = useTheme();
       setEditingFilter(newEntry);
     }
   };
-  const handleApplyOnly    = () => { setActiveFilters({ ...draftFilters }); setFilterMode(null); setNewFilterName(''); setEditingFilter(null); };
-  const deleteSavedFilter  = (id, e) => { e.stopPropagation(); setSavedFilters(prev => prev.filter(f => f.id !== id)); };
-  const loadSavedFilter    = (sf) => { setActiveFilters({ ...sf.filters }); setFilterMode(null); };
-  const clearAllFilters    = () => { setActiveFilters({}); setDraftFilters({}); setFilterMode(null); };
+  const handleApplyOnly = () => { setActiveFilters({ ...draftFilters }); setFilterMode(null); setNewFilterName(''); setEditingFilter(null); };
+  const deleteSavedFilter = (id, e) => { e.stopPropagation(); setSavedFilters(prev => prev.filter(f => f.id !== id)); };
+  const loadSavedFilter = (sf) => { setActiveFilters({ ...sf.filters }); setFilterMode(null); };
+  const clearAllFilters = () => { setActiveFilters({}); setDraftFilters({}); setFilterMode(null); };
   const removeSingleFilter = (col) => setActiveFilters(p => { const n = { ...p }; delete n[col]; return n; });
 
   const filteredCols = defaultCols.filter(c =>
@@ -585,7 +584,7 @@ const { isDark, toggleTheme } = useTheme();
           />
           {searchTerm && (
             <button className="search-clear" onClick={() => setSearchTerm('')}>
-              <XIcon size={13}/>
+              <XIcon size={13} />
             </button>
           )}
         </div>
@@ -628,9 +627,8 @@ const { isDark, toggleTheme } = useTheme();
                     {savedFilters.map(sf => (
                       <div key={sf.id} className="fm-saved-row">
                         <button
-                          className={`fm-menu-item fm-menu-item--saved ${
-                            JSON.stringify(activeFilters) === JSON.stringify(sf.filters) ? 'fm-menu-item--active' : ''
-                          }`}
+                          className={`fm-menu-item fm-menu-item--saved ${JSON.stringify(activeFilters) === JSON.stringify(sf.filters) ? 'fm-menu-item--active' : ''
+                            }`}
                           onClick={() => loadSavedFilter(sf)}
                         >
                           <span className="fm-menu-icon"><BookmarkIcon /></span>
@@ -640,7 +638,7 @@ const { isDark, toggleTheme } = useTheme();
                         </button>
                         <div className="fm-saved-actions">
                           <button className="fm-edit-btn" onClick={() => openEditFilter(sf)} title="Edit">✏️</button>
-                          <button className="fm-delete-btn" onClick={(e) => deleteSavedFilter(sf.id, e)} title="Delete"><XIcon size={10}/></button>
+                          <button className="fm-delete-btn" onClick={(e) => deleteSavedFilter(sf.id, e)} title="Delete"><XIcon size={10} /></button>
                         </div>
                       </div>
                     ))}
@@ -703,7 +701,7 @@ const { isDark, toggleTheme } = useTheme();
                         {selected && (
                           <button className="fp-clear-single"
                             onClick={() => setDraftFilters(p => { const n = { ...p }; delete n[col]; return n; })}>
-                            <XIcon size={10}/>
+                            <XIcon size={10} />
                           </button>
                         )}
                       </div>
@@ -757,9 +755,9 @@ const { isDark, toggleTheme } = useTheme();
                     key={col}
                     className={[
                       'col-drag-item',
-                      !visibleCols[col]                              ? 'col-drag-item--hidden'   : '',
-                      dragOverIdx === index && dragItemIdx !== index ? 'col-drag-item--over'     : '',
-                      dragItemIdx === index                          ? 'col-drag-item--dragging' : '',
+                      !visibleCols[col] ? 'col-drag-item--hidden' : '',
+                      dragOverIdx === index && dragItemIdx !== index ? 'col-drag-item--over' : '',
+                      dragItemIdx === index ? 'col-drag-item--dragging' : '',
                     ].filter(Boolean).join(' ')}
                     draggable
                     onDragStart={e => onDragStart(e, index)}
@@ -779,25 +777,25 @@ const { isDark, toggleTheme } = useTheme();
             </div>
           )}
         </div>
-              
-      {/* Stats toggle */}
-      {numericCols.length > 0 && (
-        <button
-          className={`btn-stats ${statsOpen ? 'active' : ''}`}
-          onClick={() => { setStatsOpen(p => !p); setActiveStatCol(numericCols[0]); }}
-        >
-          <StatsIcon />
-          Stats
-          {statsOpen && <span className="stats-badge">{numericCols.length}</span>}
-        </button>
-      )}
+
+        {/* Stats toggle */}
+        {numericCols.length > 0 && (
+          <button
+            className={`btn-stats ${statsOpen ? 'active' : ''}`}
+            onClick={() => { setStatsOpen(p => !p); setActiveStatCol(numericCols[0]); }}
+          >
+            <StatsIcon />
+            Stats
+            {statsOpen && <span className="stats-badge">{numericCols.length}</span>}
+          </button>
+        )}
 
         {/* Download */}
         <button className="btn-download" onClick={handleDownload}>
           <DownloadIcon /> Export XL
         </button>
       </div>
-        {/* Dark mode toggle */}
+      {/* Dark mode toggle */}
       <button className="btn-theme-toggle" onClick={toggleTheme} title="Toggle dark mode">
         {isDark ? <SunIcon /> : <MoonIcon />}
         {isDark ? 'Light' : 'Dark'}
@@ -812,79 +810,79 @@ const { isDark, toggleTheme } = useTheme();
                 <span className="filter-tag-col">{col}</span>
                 <span className="filter-tag-sep">{isDateColumn(col) ? 'contains' : 'is'}</span>
                 <span className="filter-tag-val">"{val}"</span>
-                <button className="tag-remove" onClick={() => removeSingleFilter(col)}><XIcon size={10}/></button>
+                <button className="tag-remove" onClick={() => removeSingleFilter(col)}><XIcon size={10} /></button>
               </span>
             ))}
           </div>
           <button className="clear-all-tag" onClick={clearAllFilters}>Clear all</button>
         </div>
       )}
-       
-       {/* Statistics bar */}
-{statsOpen && numericCols.length > 0 && (() => {
-  const col   = activeStatCol || numericCols[0];
-  const stats = getColStats(col, filteredTasks);
-  return (
-    <div className="stats-bar">
 
-      {/* Column selector tabs */}
-      <div className="stats-col-tabs">
-        <span className="stats-bar-label"><StatsIcon /> Stats:</span>
-        <div className="stats-tabs-scroll">
-          {numericCols.map(c => (
-            <button
-              key={c}
-              className={`stats-tab ${(activeStatCol || numericCols[0]) === c ? 'stats-tab--active' : ''}`}
-              onClick={() => setActiveStatCol(c)}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Statistics bar */}
+      {statsOpen && numericCols.length > 0 && (() => {
+        const col = activeStatCol || numericCols[0];
+        const stats = getColStats(col, filteredTasks);
+        return (
+          <div className="stats-bar">
 
-      {/* Stat cards */}
-     {/* Stat cards */}
-{stats ? (
-  <div className="stats-cards">
-    <div className="stats-card">
-      <span className="stats-card-label">Count</span>
-      <span className="stats-card-value">{fmt(stats.count)}</span>
-      <span className="stats-card-sub">rows with a value</span>
-    </div>
-    <div className="stats-card stats-card--sum">
-      <span className="stats-card-label">Sum</span>
-      <span className="stats-card-value">{fmt(stats.sum)}</span>
-      <span className="stats-card-sub">all values added</span>
-    </div>
-    <div className="stats-card stats-card--avg">
-      <span className="stats-card-label">Average</span>
-      <span className="stats-card-value">{fmt(stats.avg)}</span>
-      <span className="stats-card-sub">sum ÷ count</span>
-    </div>
-    <div className="stats-card stats-card--min">
-      <span className="stats-card-label">Min</span>
-      <span className="stats-card-value">{fmt(stats.min)}</span>
-      <span className="stats-card-sub">smallest value</span>
-    </div>
-    <div className="stats-card stats-card--max">
-      <span className="stats-card-label">Max</span>
-      <span className="stats-card-value">{fmt(stats.max)}</span>
-      <span className="stats-card-sub">largest value</span>
-    </div>
-    <div className="stats-card stats-card--rows">
-      <span className="stats-card-label">Filtered rows</span>
-      <span className="stats-card-value">{filteredTasks.length}</span>
-      <span className="stats-card-sub">matching current filter</span>
-    </div>
-  </div>
-) : (
-  <span className="stats-no-data">No numeric data in this column</span>
-)}
+            {/* Column selector tabs */}
+            <div className="stats-col-tabs">
+              <span className="stats-bar-label"><StatsIcon /> Stats:</span>
+              <div className="stats-tabs-scroll">
+                {numericCols.map(c => (
+                  <button
+                    key={c}
+                    className={`stats-tab ${(activeStatCol || numericCols[0]) === c ? 'stats-tab--active' : ''}`}
+                    onClick={() => setActiveStatCol(c)}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-    </div>
-  );
-})()}
+            {/* Stat cards */}
+            {/* Stat cards */}
+            {stats ? (
+              <div className="stats-cards">
+                <div className="stats-card">
+                  <span className="stats-card-label">Count</span>
+                  <span className="stats-card-value">{fmt(stats.count)}</span>
+                  <span className="stats-card-sub">rows with a value</span>
+                </div>
+                <div className="stats-card stats-card--sum">
+                  <span className="stats-card-label">Sum</span>
+                  <span className="stats-card-value">{fmt(stats.sum)}</span>
+                  <span className="stats-card-sub">all values added</span>
+                </div>
+                <div className="stats-card stats-card--avg">
+                  <span className="stats-card-label">Average</span>
+                  <span className="stats-card-value">{fmt(stats.avg)}</span>
+                  <span className="stats-card-sub">sum ÷ count</span>
+                </div>
+                <div className="stats-card stats-card--min">
+                  <span className="stats-card-label">Min</span>
+                  <span className="stats-card-value">{fmt(stats.min)}</span>
+                  <span className="stats-card-sub">smallest value</span>
+                </div>
+                <div className="stats-card stats-card--max">
+                  <span className="stats-card-label">Max</span>
+                  <span className="stats-card-value">{fmt(stats.max)}</span>
+                  <span className="stats-card-sub">largest value</span>
+                </div>
+                <div className="stats-card stats-card--rows">
+                  <span className="stats-card-label">Filtered rows</span>
+                  <span className="stats-card-value">{filteredTasks.length}</span>
+                  <span className="stats-card-sub">matching current filter</span>
+                </div>
+              </div>
+            ) : (
+              <span className="stats-no-data">No numeric data in this column</span>
+            )}
+
+          </div>
+        );
+      })()}
 
 
       {/* Sort indicator */}
@@ -895,7 +893,7 @@ const { isDark, toggleTheme } = useTheme();
             Sorted by <strong>{sortCol}</strong> ({sortDir === 'asc' ? 'A → Z' : 'Z → A'})
           </span>
           <button className="sort-clear-btn" onClick={() => { setSortCol(null); setSortDir('asc'); }}>
-            <XIcon size={11}/> Clear sort
+            <XIcon size={11} /> Clear sort
           </button>
         </div>
       )}
@@ -911,7 +909,7 @@ const { isDark, toggleTheme } = useTheme();
               <DownloadIcon /> Export Selected
             </button>
             <button className="bulk-clear-btn" onClick={() => setSelectedRows(new Set())}>
-              <XIcon size={11}/> Deselect all
+              <XIcon size={11} /> Deselect all
             </button>
           </div>
         </div>
@@ -952,7 +950,7 @@ const { isDark, toggleTheme } = useTheme();
             {pagedTasks.length > 0 ? (
               pagedTasks.map((task, index) => {
                 const highlight = getRowHighlight(task);
-                const rowKey    = task.id ?? JSON.stringify(task);
+                const rowKey = task.id ?? JSON.stringify(task);
                 const isSelected = selectedRows.has(rowKey);
                 return (
                   <tr
@@ -977,13 +975,13 @@ const { isDark, toggleTheme } = useTheme();
                         className="td-clickable"
                         title="Click to view details"
                       >
-                       {(isStatusColumn(col) || isPriorityColumn(col)) && task[col] ? (
-                      <span className={`cell-badge cell-badge--${String(task[col]).toLowerCase().replace(/\s+/g, '-')}`}>
-                        <Highlight text={task[col]} query={searchTerm} />
-                      </span>
-                    ) : (
-                      <Highlight text={task[col]} query={searchTerm} />
-                    )}
+                        {(isStatusColumn(col) || isPriorityColumn(col)) && task[col] ? (
+                          <span className={`cell-badge cell-badge--${String(task[col]).toLowerCase().replace(/\s+/g, '-')}`}>
+                            <Highlight text={task[col]} query={searchTerm} />
+                          </span>
+                        ) : (
+                          <Highlight text={task[col]} query={searchTerm} />
+                        )}
                       </td>
                     ))}
                   </tr>
