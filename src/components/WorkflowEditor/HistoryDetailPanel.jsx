@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircle, XCircle, Clock, User, Calendar, AlertTriangle, X } from 'lucide-react';
-import './WorkflowEditor.css';
+import '../../asset/css/WorkflowEditor.css';
 
 const HistoryDetailPanel = ({ historyItem, onClose }) => {
     if (!historyItem) return null;

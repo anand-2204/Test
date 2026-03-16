@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { WORKFLOW_HISTORY } from '../../constants/historyData';
 import { CheckCircle, XCircle, Clock, ChevronRight, ArrowLeft } from 'lucide-react';
-import './WorkflowEditor.css';
+import '../../asset/css/WorkflowEditor.css';
 
 const HistorySidebar = ({ onSelectHistory, onClose }) => {
     const [filter, setFilter] = useState('all');

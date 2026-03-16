@@ -1,137 +1,167 @@
 const VEHICLES = [
-    {
-        imei: '100000000000001',
-        name: 'Truck 01',
-        plate: 'DL 01 AB 1111',
-        lat: 28.2380,
-        lng: 83.9956,
-        speed: 45,
-        ignition: true,
-        battery: 95,
-        timestamp: new Date().toISOString(),
-        driver: 'Ramesh Kumar'
-    },
+  // --- Thrissur, Kerala (your original cluster) ---
+  {
+    vehicle: "KL-08-CB-0317",
+    imei: "862567078197469",
+    ignition: false,
+    speed: 0.0,
+    latitude: "10.619671",
+    longitude: "76.206298",
+    time: "2026-03-15 11:04:20",
+    city: "Thrissur"
+  },
+  {
+    vehicle: "KL-08-CB-0394",
+    imei: "862567078196982",
+    ignition: true,
+    speed: 12.5,
+    latitude: "10.621340",
+    longitude: "76.209810",
+    time: "2026-03-15 11:02:44",
+    city: "Thrissur"
+  },
 
-    //API data format
-    //   {
-    //         "vehicle": "KL-08-BW-4256",
-    //         "imei": "869137065935074",
-    //         "ignition": false,
-    //         "speed": 0.0,
-    //         "latitude": "010.615201",
-    //         "longitude": "076.213961",
-    //         "time": "2024-07-30 17:54:06"
-    //     }
+  // --- Kochi, Kerala ---
+  {
+    vehicle: "KL-07-AX-1122",
+    imei: "860000000000001",
+    ignition: true,
+    speed: 34.2,
+    latitude: "9.931233",
+    longitude: "76.267303",
+    time: "2026-03-15 11:05:00",
+    city: "Kochi"
+  },
+  {
+    vehicle: "KL-07-BZ-4490",
+    imei: "860000000000002",
+    ignition: false,
+    speed: 0.0,
+    latitude: "9.939093",
+    longitude: "76.270023",
+    time: "2026-03-15 10:58:00",
+    city: "Kochi"
+  },
+  {
+    vehicle: "KL-07-CX-8821",
+    imei: "860000000000003",
+    ignition: true,
+    speed: 18.7,
+    latitude: "9.985270",
+    longitude: "76.299530",
+    time: "2026-03-15 11:03:30",
+    city: "Kochi"
+  },
 
+  // --- Kozhikode (Calicut), Kerala ---
+  {
+    vehicle: "KL-11-DY-3301",
+    imei: "860000000000004",
+    ignition: true,
+    speed: 45.0,
+    latitude: "11.258753",
+    longitude: "75.780411",
+    time: "2026-03-15 11:06:10",
+    city: "Kozhikode"
+  },
+  {
+    vehicle: "KL-11-EW-7743",
+    imei: "860000000000005",
+    ignition: false,
+    speed: 0.0,
+    latitude: "11.244710",
+    longitude: "75.771880",
+    time: "2026-03-15 11:01:55",
+    city: "Kozhikode"
+  },
 
-    {
-        imei: '100000000000002',
-        name: 'Truck 02',
-        plate: 'DL 02 CD 2222',
-        lat: 28.2450,
-        lng: 83.9870,
-        speed: 0,
-        ignition: true,
-        battery: 72,
-        timestamp: new Date().toISOString(),
-        driver: 'Suresh Singh'
-    },
-    {
-        imei: '100000000000003',
-        name: 'Truck 03',
-        plate: 'MH 03 EF 3333',
-        lat: 28.2520,
-        lng: 84.0050,
-        speed: 0,
-        ignition: false,
-        battery: 45,
-        timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-        driver: 'Mahesh Yadav'
-    },
-    {
-        imei: '100000000000004',
-        name: 'Truck 04',
-        plate: 'MH 04 GH 4444',
-        lat: 28.2600,
-        lng: 84.0130,
-        speed: 62,
-        ignition: true,
-        battery: 88,
-        timestamp: new Date().toISOString(),
-        driver: 'Dinesh Patel'
-    },
-    {
-        imei: '100000000000005',
-        name: 'Truck 05',
-        plate: 'KA 05 IJ 5555',
-        lat: 28.2670,
-        lng: 84.0210,
-        speed: 0,
-        ignition: false,
-        battery: 15,
-        timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-        driver: 'Ganesh Verma'
-    },
-    {
-        imei: '100000000000006',
-        name: 'Truck 06',
-        plate: 'KA 06 KL 6666',
-        lat: 28.2740,
-        lng: 84.0290,
-        speed: 38,
-        ignition: true,
-        battery: 60,
-        timestamp: new Date().toISOString(),
-        driver: 'Vijay Sharma'
-    },
-    {
-        imei: '100000000000007',
-        name: 'Truck 07',
-        plate: 'UP 07 MN 7777',
-        lat: 28.2810,
-        lng: 84.0370,
-        speed: 0,
-        ignition: true,
-        battery: 80,
-        timestamp: new Date().toISOString(),
-        driver: 'Anil Gupta'
-    },
-    {
-        imei: '100000000000008',
-        name: 'Truck 08',
-        plate: 'UP 08 OP 8888',
-        lat: 28.2880,
-        lng: 84.0450,
-        speed: 55,
-        ignition: true,
-        battery: 33,
-        timestamp: new Date().toISOString(),
-        driver: 'Ravi Tiwari'
-    },
-    {
-        imei: '100000000000009',
-        name: 'Truck 09',
-        plate: 'RJ 09 QR 9999',
-        lat: 28.2950,
-        lng: 84.0530,
-        speed: 0,
-        ignition: false,
-        battery: 55,
-        timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-        driver: 'Sanjay Mishra'
-    },
-    {
-        imei: '100000000000010',
-        name: 'Truck 10',
-        plate: 'RJ 10 ST 1010',
-        lat: 28.3020,
-        lng: 84.0610,
-        speed: 71,
-        ignition: true,
-        battery: 91,
-        timestamp: new Date().toISOString(),
-        driver: 'Prakash Joshi'
-    },
+  // --- Thiruvananthapuram (Trivandrum), Kerala ---
+  {
+    vehicle: "KL-01-FQ-9912",
+    imei: "860000000000006",
+    ignition: true,
+    speed: 27.3,
+    latitude: "8.524139",
+    longitude: "76.936638",
+    time: "2026-03-15 11:07:45",
+    city: "Thiruvananthapuram"
+  },
+  {
+    vehicle: "KL-01-GR-5564",
+    imei: "860000000000007",
+    ignition: false,
+    speed: 0.0,
+    latitude: "8.500420",
+    longitude: "76.960120",
+    time: "2026-03-15 10:55:30",
+    city: "Thiruvananthapuram"
+  },
+
+  // --- Kannur, Kerala ---
+  {
+    vehicle: "KL-13-HM-2278",
+    imei: "860000000000008",
+    ignition: true,
+    speed: 60.1,
+    latitude: "11.868750",
+    longitude: "75.370018",
+    time: "2026-03-15 11:04:55",
+    city: "Kannur"
+  },
+  {
+    vehicle: "KL-13-JN-6631",
+    imei: "860000000000009",
+    ignition: false,
+    speed: 0.0,
+    latitude: "11.874500",
+    longitude: "75.375000",
+    time: "2026-03-15 10:50:00",
+    city: "Kannur"
+  },
+
+  // --- Kollam, Kerala ---
+  {
+    vehicle: "KL-02-KP-4482",
+    imei: "860000000000010",
+    ignition: true,
+    speed: 22.8,
+    latitude: "8.887260",
+    longitude: "76.589905",
+    time: "2026-03-15 11:03:10",
+    city: "Kollam"
+  },
+  {
+    vehicle: "KL-02-LP-3319",
+    imei: "860000000000011",
+    ignition: false,
+    speed: 0.0,
+    latitude: "8.895100",
+    longitude: "76.610230",
+    time: "2026-03-15 10:48:00",
+    city: "Kollam"
+  },
+
+  // --- Palakkad, Kerala ---
+  {
+    vehicle: "KL-09-MQ-7756",
+    imei: "860000000000012",
+    ignition: true,
+    speed: 38.4,
+    latitude: "10.776540",
+    longitude: "76.654260",
+    time: "2026-03-15 11:02:00",
+    city: "Palakkad"
+  },
+  {
+    vehicle: "KL-09-NR-1143",
+    imei: "860000000000013",
+    ignition: false,
+    speed: 0.0,
+    latitude: "10.791000",
+    longitude: "76.660000",
+    time: "2026-03-15 10:45:00",
+    city: "Palakkad"
+  }
 ];
 
 export default VEHICLES;

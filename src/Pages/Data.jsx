@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import * as XLSX from 'xlsx';
-import '../asset/data.css';
+import '../asset/css/data.css';
 import data from "../asset/data.json";
 import { useTheme } from '../globalContext/context/ThemeContect';
-import { jsxDEV } from "react/jsx-dev-runtime";
+
 
 
 /* ─── Icons ─────────────────────────────────────────── */

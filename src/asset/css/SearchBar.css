@@ -1,0 +1,79 @@
+.searchbar-wrapper {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f1f1f1;
+    background: #ffffff;
+}
+
+.searchbar-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    height: 38px;
+    background: #f7f8fa;
+    border: 1px solid #eeeff2;
+    border-radius: 10px;
+    transition: all 0.18s ease;
+}
+
+.searchbar-container:hover {
+    border-color: #e0e0e0;
+    background: #f4f5f8;
+}
+
+.searchbar-container--focused {
+    background: #ffffff;
+    border-color: #a5b4fc;
+    box-shadow: 0 0 0 3px rgba(165, 180, 252, 0.2);
+}
+
+.searchbar-container--focused:hover {
+    border-color: #a5b4fc;
+    background: #ffffff;
+}
+
+.searchbar-icon {
+    color: #c0c5cf;
+    flex-shrink: 0;
+    transition: color 0.18s ease;
+}
+
+.searchbar-container--focused .searchbar-icon {
+    color: #6366f1;
+}
+
+.searchbar-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 13px;
+    color: #1a1d23;
+    font-weight: 400;
+}
+
+.searchbar-input::placeholder {
+    color: #c0c5cf;
+    font-weight: 400;
+}
+
+.searchbar-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: #e8eaed;
+    color: #888;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+    padding: 0;
+}
+
+.searchbar-clear:hover {
+    background: #dde0e5;
+    color: #444;
+}

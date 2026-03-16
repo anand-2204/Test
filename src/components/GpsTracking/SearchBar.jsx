@@ -1,25 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Search, X } from 'lucide-react';
+import '../../asset/css/SearchBar.css';
 
 const SearchBar = ({ search, setSearch }) => {
+    const [isFocused, setIsFocused] = useState(false);
+
     return (
-        <div style={{ padding: '12px 16px', borderBottom: '1px solid #1e293b' }}>
-            <input
-                type="text"
-                placeholder="🔍 Search vehicle, plate, driver..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    borderRadius: '8px',
-                    border: '1px solid #334155',
-                    background: '#1e293b',
-                    color: '#f1f5f9',
-                    fontSize: '13px',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                }}
-            />
+        <div className="searchbar-wrapper">
+            <div className={`searchbar-container ${isFocused ? 'searchbar-container--focused' : ''}`}>
+                <Search
+                    size={15}
+                    strokeWidth={2.2}
+                    className="searchbar-icon"
+                />
+                <input
+                    type="text"
+                    placeholder="Search vehicle, plate, city..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    className="searchbar-input"
+                />
+                {search && (
+                    <button
+                        className="searchbar-clear"
+                        onClick={() => setSearch('')}
+                        title="Clear"
+                    >
+                        <X size={13} strokeWidth={2.5} />
+                    </button>
+                )}
+            </div>
         </div>
     );
 };

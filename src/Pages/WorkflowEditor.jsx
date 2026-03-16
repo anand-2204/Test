@@ -11,7 +11,7 @@ import PropertiesPanel from '../components/WorkflowEditor/PropertiesPanel';
 import EditorCanvas from '../components/WorkflowEditor/EditorCanvas';
 import HistorySidebar from '../components/WorkflowEditor/HistorySidebar';
 import HistoryDetailPanel from '../components/WorkflowEditor/HistoryDetailPanel';
-import '../components/WorkflowEditor/WorkflowEditor.css';
+import '../asset/css/WorkflowEditor.css';
 
 const WorkflowEditor = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { WORKFLOW_ITEMS } from '../../constants/workflowConfig';
 import { Trash2 } from 'lucide-react';
-import './WorkflowEditor.css';
+import '../../asset/css/WorkflowEditor.css';
 import { useState } from 'react';
 
 const PropertiesPanel = ({ selectedNode, updateNodeData, deleteNode }) => {

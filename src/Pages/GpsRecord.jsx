@@ -1,187 +1,168 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/GpsTracking/Sidebar';
 import MapView from '../components/map/MapView';
-import InfoCards from '../components/GpsTracking/InfoCards';
 import StatusBar from '../components/GpsTracking/StatusBar';
-import useVehicleData from '../globalContext/hooks/useVehicleData';
-import useReverseGeocode from '../globalContext/hooks/useReverseGeocode';
+import useVehicleData from '../hooks/useVehicleData';
+import useReverseGeocode from '../hooks/useReverseGeocode';
 import VEHICLES from '../constants/vehicleData';
-import { useTheme } from '../globalContext/context/ThemeContect';
 import '../asset/css/GpsRecord.css';
-import StatsPanel from '../components/GpsTracking/StatsPanel';
 
-
-
-const SunIcon = () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15">
-        <circle cx="12" cy="12" r="5" />
-        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42
-             M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-    </svg>
-);
-
-const MoonIcon = () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15">
-        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-    </svg>
-);
+import {
+  Satellite,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Truck,
+  X,
+  Radio,
+  MapPin,
+  Cpu,
+  Navigation,
+  Clock,
+  WifiOff,
+} from 'lucide-react';
 
 const GpsRecords = () => {
-    const { vehicleData, lastSeen, updateFromSocket } = useVehicleData();
-    const address = useReverseGeocode(vehicleData?.lat, vehicleData?.lng);
-    const [selectedVehicle, setSelectedVehicle] = useState(null);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [currentTime, setCurrentTime] = useState(new Date());
-    const { isDark, toggleTheme } = useTheme();
-    const [isStatsOpen, setIsStatsOpen] = useState(true);
+  const { vehicleData, selectVehicle } = useVehicleData();
+  const address = useReverseGeocode(vehicleData?.lat, vehicleData?.lng);
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-    // ✅ Live clock
-    useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-        return () => clearInterval(timer);
-    }, []);
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-    const handleVehicleSelect = (vehicle) => {
-        setSelectedVehicle(vehicle);
-        updateFromSocket(vehicle);
-    };
+  const handleVehicleSelect = (vehicle) => {
+    setSelectedVehicle(vehicle);
+    selectVehicle(vehicle);
+  };
 
-    const movingCount = VEHICLES.filter(v => v.ignition && v.speed > 0).length;
-    const idlingCount = VEHICLES.filter(v => v.ignition && v.speed === 0).length;
-    const offlineCount = VEHICLES.filter(v => !v.ignition).length;
+  const movingCount = VEHICLES.filter(v => v.ignition && v.speed > 0).length;
+  const idlingCount = VEHICLES.filter(v => v.ignition && v.speed === 0).length;
+  const offlineCount = VEHICLES.filter(v => !v.ignition).length;
 
-    return (
-        <>
+  return (
+    <div className="gps-root">
 
+      {/* ── Navbar ── */}
+      <nav className="gps-navbar">
+        <div className="gps-navbar-left">
 
-            {/* ── Root ─────────────────────────────────────────── */}
-            <div className="gps-root">
+          <button
+            className="gps-toggle-btn"
+            onClick={() => setIsSidebarOpen(p => !p)}
+            title={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+          >
+            {isSidebarOpen ? <PanelLeftClose size={17} /> : <PanelLeftOpen size={17} />}
+          </button>
 
-                {/* ── Navbar ───────────────────────────────────── */}
-                <nav className="gps-navbar">
-
-                    {/* Left */}
-                    <div className="gps-navbar-left">
-                        <button
-                            className="gps-toggle-btn"
-                            onClick={() => setIsSidebarOpen(p => !p)}
-                            title={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
-                        >
-                            {isSidebarOpen ? '◀' : '▶'}
-                        </button>
-
-                        <div className="gps-logo">
-                            <span className="gps-logo-icon">🛰️</span>
-                            <div>
-                                <p className="gps-logo-title">FleetTrack</p>
-                                <p className="gps-logo-subtitle">LIVE VEHICLE MONITORING</p>
-                            </div>
-                        </div>
-                    </div>
+          <div className="gps-logo">
+            <div className="gps-logo-icon">
+              <Satellite size={18} strokeWidth={1.8} />
+            </div>
+            <div>
+              <p className="gps-logo-title">FleetTrack</p>
+              <p className="gps-logo-subtitle">Live Vehicle Monitoring</p>
+            </div>
+          </div>
+        </div>
 
 
 
-                    {/* Right */}
-                    <div className="gps-navbar-right">
-                        <div className="gps-live-badge">
-                            <span className="gps-live-dot" />
-                            <span className="gps-live-text">LIVE</span>
-                        </div>
-                        <span className="gps-clock">
-                            {currentTime.toLocaleTimeString()}
-                        </span>
-                    </div>
+        <div className="gps-navbar-right">
+          <div className="gps-live-badge">
+            <span className="gps-live-dot" />
+            <Radio size={11} strokeWidth={2.5} />
+            <span>LIVE</span>
+          </div>
+          <div className="gps-clock-block">
+            <span className="gps-clock">{currentTime.toLocaleTimeString()}</span>
+            <span className="gps-date">{currentTime.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+          </div>
+        </div>
+      </nav>
 
-                    {/* Dark mode toggle */}
-                    <button className="btn-theme-toggle" onClick={toggleTheme} title="Toggle dark mode">
-                        {isDark ? <SunIcon /> : <MoonIcon />}
-                        {isDark ? 'Light' : 'Dark'}
-                    </button>
-                </nav>
+      {/* ── Body ── */}
+      <div className="gps-body">
 
-                {/* ── Body ─────────────────────────────────────── */}
-                <div className="gps-body">
+        {/* Sidebar */}
+        <div
+          className="gps-sidebar-wrapper"
+          style={{
+            width: isSidebarOpen ? '300px' : '0px',
+            minWidth: isSidebarOpen ? '300px' : '0px',
+          }}
+        >
+          <Sidebar
+            onVehicleSelect={handleVehicleSelect}
+            selectedVehicle={selectedVehicle}
+          />
+        </div>
 
-                    {/* Sidebar */}
-                    <div
-                        className="gps-sidebar-wrapper"
-                        style={{
-                            width: isSidebarOpen ? '300px' : '0px',
-                            minWidth: isSidebarOpen ? '300px' : '0px',
-                        }}
-                    >
-                        <Sidebar
-                            onVehicleSelect={handleVehicleSelect}
-                            selectedVehicle={selectedVehicle}
-                        />
-                    </div>
+        {/* Right Panel */}
+        <div className="gps-right">
 
-                    {/* Right Panel */}
-                    <div className="gps-right">
-
-                        {/* Info Panel */}
-                        <div className="gps-info-panel">
-                            {selectedVehicle ? (
-                                <>
-                                    {/* Vehicle Header */}
-                                    <div className="gps-vehicle-header">
-                                        <div className="gps-vehicle-icon">🚛</div>
-                                        <div>
-                                            <p className="gps-vehicle-name">
-                                                {selectedVehicle.name}
-                                            </p>
-                                            <p className="gps-vehicle-sub">
-                                                {selectedVehicle.plate} &nbsp;•&nbsp; {selectedVehicle.driver}
-                                            </p>
-                                        </div>
-                                        <button
-                                            className="gps-deselect-btn"
-                                            onClick={() => setSelectedVehicle(null)}
-                                        >
-                                            ✕ Deselect
-                                        </button>
-                                    </div>
-
-                                    <InfoCards vehicleData={vehicleData} lastSeen={lastSeen} />
-                                    <StatusBar address={address} />
-                                </>
-                            ) : (
-                                <div className="gps-placeholder">
-                                    <div className="gps-placeholder-icon">🚛</div>
-                                    <span>Select a vehicle from the sidebar to view live details</span>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Map */}
-                        <div className="gps-map-wrapper">
-                            <div className="gps-map-inner">
-                                <MapView
-                                    vehicles={VEHICLES}
-                                    selectedVehicle={selectedVehicle}
-                                    onVehicleSelect={handleVehicleSelect}
-                                />
-                            </div>
-                            {/* Map overlay label */}
-                            <div className="gps-map-label">
-                                🗺️ {VEHICLES.length} Vehicles • Live
-                            </div>
-                        </div>
-
-                    </div>
-
-
+          {/* Info Panel */}
+          <div className="gps-info-panel">
+            {selectedVehicle ? (
+              <div className="gps-vehicle-header">
+                <div className="gps-vehicle-icon">
+                  <Truck size={19} strokeWidth={1.8} />
+                </div>
+                <div className="gps-vehicle-meta">
+                  <p className="gps-vehicle-name">
+                    {selectedVehicle.vehicle || selectedVehicle.plate}
+                  </p>
+                  <p className="gps-vehicle-sub">
+                    <Cpu size={10} />
+                    <span>{selectedVehicle.imei}</span>
+                    <span className="gps-meta-dot">•</span>
+                    <MapPin size={10} />
+                    <span>{selectedVehicle.city || '—'}</span>
+                  </p>
                 </div>
 
-            </div>
-            {/* ✅ Stats Panel sits below the map */}
-            <StatsPanel
-                selectedVehicle={selectedVehicle}
-                isOpen={isStatsOpen}
-                onToggle={() => setIsStatsOpen(p => !p)}
+                <div className="gps-statusbar-wrap">
+                  <StatusBar address={address} />
+                </div>
+
+                <button
+                  className="gps-deselect-btn"
+                  onClick={() => setSelectedVehicle(null)}
+                >
+                  <X size={13} />
+                  Deselect
+                </button>
+              </div>
+            ) : (
+              <div className="gps-placeholder">
+                <Truck size={18} strokeWidth={1.6} />
+                <span>Select a vehicle from the sidebar to view details</span>
+              </div>
+            )}
+          </div>
+
+          {/* Map */}
+          <div className="gps-map-wrapper">
+            <MapView
+              vehicles={VEHICLES}
+              selectedVehicle={selectedVehicle}
+              onVehicleSelect={handleVehicleSelect}
             />
-        </>
-    );
+
+            <div className="gps-map-label">
+              <MapPin size={12} />
+              <span>{VEHICLES.length} Vehicles</span>
+              <span className="gps-map-sep">•</span>
+              <span className="gps-map-live">Live</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default GpsRecords;

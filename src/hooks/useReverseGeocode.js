@@ -4,13 +4,22 @@ import { useState, useEffect, useRef } from 'react';
 const useReverseGeocode = (lat, lng) => {
     const [address, setAddress] = useState('Fetching address...');
     const debounceTimer = useRef(null); // stores the timer
-
+    const cache = useRef({}); //to avoid repeat API calls
+   
+   
     useEffect(() => {
         if (!lat || !lng) return;
-
-        // Clear previous timer — reset the countdown every time lat/lng changes
-        if (debounceTimer.current) {
-            clearTimeout(debounceTimer.current);
+       
+        const key = `${parseFloat(lat).toFixed(5)},${parseFloat(lng).toFixed(5)}`;
+         
+        //Return cached result instantly no api call needed
+        if(cache.current[key]){
+             setAddress(cache.current[key]);
+             return;
+        }
+       
+        if(debounceTimer.current){
+           clearTimeout(debounceTimer.current);
         }
 
         // Only fire after 2 seconds of NO position changes
@@ -29,7 +38,13 @@ const useReverseGeocode = (lat, lng) => {
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
                 const data = await res.json();
-                setAddress(data.display_name || 'Address not found');
+                const {city, town, village, county, state, country} = data.address;                
+                 const cityName = city || town || village || county || 'Unknown Area';
+                 const result = `${cityName}, ${state}, ${country}`; 
+               
+                 cache.current[key] = result;
+                 console.log("Address==", result)
+                setAddress(result);
 
             } catch (err) {
                 if (err.message.includes('429')) {
@@ -39,7 +54,7 @@ const useReverseGeocode = (lat, lng) => {
                 }
                 console.warn('Geocoding error:', err.message);
             }
-        }, 60000);
+        }, 2000);
 
 
         return () => clearTimeout(debounceTimer.current);

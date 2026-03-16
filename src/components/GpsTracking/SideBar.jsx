@@ -13,22 +13,19 @@ const SideBar = ({ onVehicleSelect, selectedVehicle }) => {
     // Apply search + filter
     const filteredVehicles = VEHICLES.filter(v => {
         const matchSearch =
-            v.name.toLowerCase().includes(search.toLowerCase()) ||
-            v.plate.toLowerCase().includes(search.toLowerCase()) ||
-            v.driver.toLowerCase().includes(search.toLowerCase());
-
-        const status = getStatus(v.ignition, v.speed).label.toLowerCase();
-        const matchFilter = filter === 'all' || status === filter;
-
-        return matchSearch && matchFilter;
+           (v.vehicle ?? '').toLowerCase().includes(search.toLowerCase()) ||
+           (v.imei ?? '').toLowerCase().includes(search.toLowerCase());
+         
+           const status = getStatus(v.ignition, parseFloat(v.speed)).label.toLowerCase();
+           const matchFilter = filter ==='all' || status === filter;
+        return  matchSearch && matchFilter;
     });
-
     return (
         <div style={{
             width: '300px',
             minWidth: '300px',
             height: '100vh',
-            background: '#0f172a',
+            background: '#fff',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',

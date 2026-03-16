@@ -4,10 +4,10 @@ import 'leaflet-routing-machine';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
 import MapContainer from './MapContainer';
-import useMapInit from '../../globalContext/hooks/useMapInit';
-import useVehicleMarkers from '../../globalContext/hooks/useVehicleMarkers';
-import useSelectedVehicle from '../../globalContext/hooks/useSelectedVehicle';
-import useMapRouting from '../../globalContext/hooks/useMapRouting';
+import useMapInit from '../../hooks/useMapInit';
+import useVehicleMarkers from '../../hooks/useVehicleMarkers';
+import useSelectedVehicle from '../../hooks/useSelectedVehicle';
+import useMapRouting from '../../hooks/useMapRouting';
 
 const MapView = ({ vehicles = [], selectedVehicle, onVehicleSelect }) => {
 

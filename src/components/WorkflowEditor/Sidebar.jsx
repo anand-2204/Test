@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { WORKFLOW_ITEMS } from '../../constants/workflowConfig';
 import { History } from 'lucide-react';
-import './WorkflowEditor.css';
+import '../../asset/css/WorkflowEditor.css';
 
 const Sidebar = ({ onToggleHistory }) => {
   const [activeTab, setActiveTab] = useState('tasks');
