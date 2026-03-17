@@ -3,15 +3,13 @@ import SidebarHeader from './SidebarHeader';
 import SummaryBadges from './SummaryBadges';
 import SearchBar from './SearchBar';
 import VehicleList from './VehicleList';
-import VEHICLES from '../../constants/vehicleData';
 import { getStatus } from '../../utils/helpers';
-
-const SideBar = ({ onVehicleSelect, selectedVehicle }) => {
+const SideBar = ({ onVehicleSelect, selectedVehicle, vehicles = [] }) => {
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('all');
 
     // Apply search + filter
-    const filteredVehicles = VEHICLES.filter(v => {
+    const filteredVehicles = vehicles.filter(v => {
         const matchSearch =
            (v.vehicle ?? '').toLowerCase().includes(search.toLowerCase()) ||
            (v.imei ?? '').toLowerCase().includes(search.toLowerCase());
@@ -32,7 +30,7 @@ const SideBar = ({ onVehicleSelect, selectedVehicle }) => {
             borderRight: '1px solid #1e293b'
         }}>
             {/* <SidebarHeader /> */}
-            <SummaryBadges filter={filter} setFilter={setFilter} />
+            <SummaryBadges filter={filter} setFilter={setFilter} vehicles={vehicles} />
             <SearchBar search={search} setSearch={setSearch} />
             <VehicleList
                 vehicles={filteredVehicles}

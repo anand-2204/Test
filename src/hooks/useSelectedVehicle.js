@@ -10,10 +10,10 @@ const useSelectedVehicle = (mapRef, markersRef, selectedVehicle) => {
 
         if (isNaN(lat) || isNaN(lng)) return;
 
-        // ✅ Pan + zoom to selected vehicle
+        //  Pan + zoom to selected vehicle
         mapRef.current.setView([lat, lng], 15, { animate: true });
 
-        // ✅ Open its popup
+        // Open its popup
         if (markersRef.current[imei]) {
             markersRef.current[imei].openPopup();
         }

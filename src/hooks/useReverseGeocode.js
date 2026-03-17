@@ -5,21 +5,21 @@ const useReverseGeocode = (lat, lng) => {
     const [address, setAddress] = useState('Fetching address...');
     const debounceTimer = useRef(null); // stores the timer
     const cache = useRef({}); //to avoid repeat API calls
-   
-   
+
+
     useEffect(() => {
         if (!lat || !lng) return;
-       
+
         const key = `${parseFloat(lat).toFixed(5)},${parseFloat(lng).toFixed(5)}`;
-         
+
         //Return cached result instantly no api call needed
-        if(cache.current[key]){
-             setAddress(cache.current[key]);
-             return;
+        if (cache.current[key]) {
+            setAddress(cache.current[key]);
+            return;
         }
-       
-        if(debounceTimer.current){
-           clearTimeout(debounceTimer.current);
+
+        if (debounceTimer.current) {
+            clearTimeout(debounceTimer.current);
         }
 
         // Only fire after 2 seconds of NO position changes
@@ -38,12 +38,12 @@ const useReverseGeocode = (lat, lng) => {
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
                 const data = await res.json();
-                const {city, town, village, county, state, country} = data.address;                
-                 const cityName = city || town || village || county || 'Unknown Area';
-                 const result = `${cityName}, ${state}, ${country}`; 
-               
-                 cache.current[key] = result;
-                 console.log("Address==", result)
+                const { city, town, village, county, state, country } = data.address;
+                const cityName = city || town || village || county || 'Unknown Area';
+                const result = `${cityName}, ${state}, ${country}`;
+
+                cache.current[key] = result;
+
                 setAddress(result);
 
             } catch (err) {

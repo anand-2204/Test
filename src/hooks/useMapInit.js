@@ -8,7 +8,7 @@ const useMapInit = (mapContainerRef, mapRef) => {
         if (mapRef.current) return;
         if (!mapContainerRef.current) return;
 
-        // ✅ Initialize Leaflet map
+        //  Initialize Leaflet map
         const map = L.map(mapContainerRef.current, {
             center: DEFAULT_CENTER,
             zoom: 12,
@@ -17,16 +17,16 @@ const useMapInit = (mapContainerRef, mapRef) => {
 
         mapRef.current = map;
 
-        // ✅ Tile layer
+        //  Tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors',
             maxZoom: 19,
         }).addTo(map);
 
-        // ✅ Fix blank/grey map issue
+        //  Fix blank/grey map issue
         setTimeout(() => map.invalidateSize(), 100);
 
-        // ✅ Cleanup on unmount
+        //  Cleanup on unmount
         return () => {
             map.remove();
             mapRef.current = null;

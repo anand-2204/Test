@@ -1,5 +1,5 @@
 const VEHICLES = [
-  // --- Thrissur, Kerala (your original cluster) ---
+  
   {
     vehicle: "KL-08-CB-0317",
     imei: "862567078197469",
