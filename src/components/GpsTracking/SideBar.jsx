@@ -4,6 +4,8 @@ import SummaryBadges from './SummaryBadges';
 import SearchBar from './SearchBar';
 import VehicleList from './VehicleList';
 import { getStatus } from '../../utils/helpers';
+
+
 const SideBar = ({ onVehicleSelect, selectedVehicle, vehicles = [] }) => {
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('all');

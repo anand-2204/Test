@@ -1,14 +1,18 @@
 import React from 'react';
 import { Navigation, Clock, WifiOff } from 'lucide-react';
-import VEHICLES from '../../constants/vehicleData';
 import { getStatus } from '../../utils/helpers';
 import '../../asset/css/SummaryBadges.css';
 
-const SummaryBadges = ({ filter, setFilter }) => {
+import { useDispatch, useSelector } from 'react-redux';
 
-    const moving = VEHICLES.filter(v => getStatus(v.ignition, v.speed).label === 'Moving').length;
-    const idling = VEHICLES.filter(v => getStatus(v.ignition, v.speed).label === 'Idling').length;
-    const offline = VEHICLES.filter(v => getStatus(v.ignition, v.speed).label === 'Offline').length;
+const SummaryBadges = ({ filter, setFilter }) => {
+    const dispatch = useDispatch();
+    const { gpsData } = useSelector((state) => state.gpsData);
+
+    const moving = gpsData.filter(v => getStatus(v.ignition, v.speed).label === 'Moving').length;
+    const idling = gpsData.filter(v => getStatus(v.ignition, v.speed).label === 'Idling').length;
+    const offline = gpsData.filter(v => getStatus(v.ignition, v.speed).label === 'Offline').length;
+
 
     const badges = [
         {

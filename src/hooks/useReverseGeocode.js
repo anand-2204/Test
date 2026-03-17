@@ -1,67 +1,83 @@
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 
 const useReverseGeocode = (lat, lng) => {
-    const [address, setAddress] = useState('Fetching address...');
-    const debounceTimer = useRef(null); // stores the timer
-    const cache = useRef({}); //to avoid repeat API calls
-
+    const [address, setAddress] = useState("Fetching address...");
+    const debounceTimer = useRef(null);
+    const cache = useRef({});
 
     useEffect(() => {
-        if (!lat || !lng) return;
+        const latitude = parseFloat(lat);
+        const longitude = parseFloat(lng);
 
-        const key = `${parseFloat(lat).toFixed(5)},${parseFloat(lng).toFixed(5)}`;
+        // prevent invalid coordinates
+        if (isNaN(latitude) || isNaN(longitude)) return;
 
-        //Return cached result instantly no api call needed
+        const key = `${latitude.toFixed(5)},${longitude.toFixed(5)} `;
+
+        // return cached address
         if (cache.current[key]) {
             setAddress(cache.current[key]);
             return;
         }
 
+        // clear previous timer
         if (debounceTimer.current) {
             clearTimeout(debounceTimer.current);
         }
 
-        // Only fire after 2 seconds of NO position changes
         debounceTimer.current = setTimeout(async () => {
             try {
                 const res = await fetch(
-                    `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+                    `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
                     {
                         headers: {
-
-                            'Accept-Language': 'en',
-                        }
+                            "Accept-Language": "en",
+                            "User-Agent": "vehicle-tracker-app",
+                        },
                     }
                 );
 
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
                 const data = await res.json();
-                const { city, town, village, county, state, country } = data.address;
-                const cityName = city || town || village || county || 'Unknown Area';
-                const result = `${cityName}, ${state}, ${country}`;
+                const addr = data?.address || {};
+
+                const cityName =
+                    addr.city ||
+                    addr.town ||
+                    addr.village ||
+                    addr.county ||
+                    "Unknown Area";
+
+                const state = addr.state || "";
+                const country = addr.country || "";
+
+                const result = [cityName, state, country].filter(Boolean).join(", ");
 
                 cache.current[key] = result;
-
                 setAddress(result);
-
             } catch (err) {
-                if (err.message.includes('429')) {
-                    setAddress('Too many requests — try again shortly');
+                if (err.message.includes("429")) {
+                    setAddress("Too many requests — try again shortly");
                 } else {
-                    setAddress('Address not available');
+                    setAddress("Address not available");
                 }
-                console.warn('Geocoding error:', err.message);
+
+                console.warn("Geocoding error:", err.message);
             }
         }, 2000);
 
-
-        return () => clearTimeout(debounceTimer.current);
-
+        return () => {
+            if (debounceTimer.current) {
+                clearTimeout(debounceTimer.current);
+                debounceTimer.current = null;
+            }
+        };
     }, [lat, lng]);
 
     return address;
 };
 
 export default useReverseGeocode;
+

@@ -1,6 +1,5 @@
 import React from 'react';
 
-// ✅ Just the styled wrapper div — no logic
 const MapContainer = ({ mapContainerRef }) => {
     return (
         <div style={{

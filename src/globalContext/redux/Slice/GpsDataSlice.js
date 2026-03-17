@@ -12,7 +12,7 @@ export const fetchGpsData = createAsyncThunk('gps/fetchGpsData', async (_, thunk
                 "split_lating": "true"
             }
         );
-        // console.log("response==", response.data.data);
+        console.log("response==", response.data.data);
         return response.data.data;
     } catch (error) {
         return thunkAPI.rejectWithValue(error.response.data ?? error.message);
@@ -55,24 +55,30 @@ const gpsDataSlice = createSlice({
                             state.history[imei] = [];
                         }
 
-                        const lastPoint = state.history[imei].at(-1);
-                        const hasChanged =
-                            !lastPoint ||
-                            lastPoint.latitude !== vehicle.latitude ||
-                            lastPoint.longitude !== vehicle.longitude ||
-                            lastPoint.time !== vehicle.time;
+                        if (vehicle.location) {
+                            const [lat, lng] = vehicle.location.split(' ');
+                            const latitude = parseFloat(lat);
+                            const longitude = parseFloat(lng);
 
-                        if (hasChanged) {
-                            state.history[imei].push({
-                                latitude: vehicle.latitude,
-                                longitude: vehicle.longitude,
-                                speed: vehicle.speed,
-                                ignition: vehicle.ignition,
-                                time: vehicle.time,
-                            });
+                            const lastPoint = state.history[imei].at(-1);
+                            const hasChanged =
+                                !lastPoint ||
+                                lastPoint.latitude !== latitude ||
+                                lastPoint.longitude !== longitude ||
+                                lastPoint.time !== vehicle.time;
 
-                            if (state.history[imei].length > MAX_HISTORY) {
-                                state.history[imei].shift();
+                            if (hasChanged) {
+                                state.history[imei].push({
+                                    latitude,
+                                    longitude,
+                                    speed: vehicle.speed,
+                                    ignition: vehicle.ignition,
+                                    time: vehicle.time,
+                                });
+
+                                if (state.history[imei].length > MAX_HISTORY) {
+                                    state.history[imei].shift();
+                                }
                             }
                         }
                     });
