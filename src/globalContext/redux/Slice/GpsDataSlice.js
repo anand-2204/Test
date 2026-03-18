@@ -1,27 +1,106 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios';
+import { supabase } from '../../supabase/supabase';
 
+// Supabase save thunk
+export const saveChangedVehiclesToSupabase = createAsyncThunk(
+    'gps/saveToSupabase',
+    async (changedVehicles, thunkAPI) => {
+        try {
+            if (changedVehicles.length === 0) return;
 
+            const { error } = await supabase
+                .from('vehicle_history')
+                .insert(changedVehicles);
 
+            if (error) throw error;
+
+            // console.log(`Saved ${changedVehicles.length} records to Supabase`);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.message);
+        }
+    }
+);
+
+// Main GPS fetch thunk
 export const fetchGpsData = createAsyncThunk('gps/fetchGpsData', async (_, thunkAPI) => {
     try {
-        const response = await axios.post('https://compass.transight.in/external/api/v2/get_all_vehicles_last_data/',
+        const response = await axios.post(
+            'https://compass.transight.in/external/api/v2/get_all_vehicles_last_data/',
             {
                 "apikey": import.meta.env.VITE_GPS_APIKEY,
-
                 "split_lating": "true"
             }
         );
-        console.log("response==", response.data.data);
-        return response.data.data;
+
+        const vehicles = response.data.data;
+
+        // Get current history from Redux state BEFORE reducer updates it
+        const state = thunkAPI.getState();
+        const history = state.gpsData.history;
+
+        const changedVehicles = [];
+
+        if (vehicles && Array.isArray(vehicles)) {
+            vehicles.forEach((vehicle) => {
+                const imei = vehicle.imei;
+                const vehicleHistory = history[imei] || [];
+
+                if (vehicle.location) {
+                    const [lat, lng] = vehicle.location.split(' ');
+                    const latitude = parseFloat(lat);
+                    const longitude = parseFloat(lng);
+
+                    const lastPoint = vehicleHistory.at(-1);
+                    const hasChanged =
+                        !lastPoint ||
+                        lastPoint.latitude !== latitude ||
+                        lastPoint.longitude !== longitude ||
+                        lastPoint.time !== vehicle.time;
+
+                    if (hasChanged) {
+                        changedVehicles.push({
+                            imei,
+                            latitude,
+                            longitude,
+                            speed: vehicle.speed,
+                            ignition: vehicle.ignition,
+                            time: vehicle.time,
+                        });
+                    }
+                }
+            });
+        }
+
+        let lastSupabaseSave = null;
+        const SAVE_INTERVAL_MS = 2000; // 1 hour
+
+        // Await dispatch so errors don't get silently lost
+        if (changedVehicles.length > 0) {
+            const now = Date.now();
+            const shouldSave =
+                !lastSupabaseSave || (now - lastSupabaseSave) >= SAVE_INTERVAL_MS;
+
+            if (shouldSave) {
+                await thunkAPI.dispatch(saveChangedVehiclesToSupabase(changedVehicles));
+                lastSupabaseSave = now;
+                console.log("saved to supabase");
+            } else {
+                const minutesLeft = Math.ceil((SAVE_INTERVAL_MS - (now - lastSupabaseSave)) / 60000);
+                console.log(`Next Supabase save in ${minutesLeft} minutes`);
+            }
+        }
+
+        return vehicles;
+
     } catch (error) {
-        return thunkAPI.rejectWithValue(error.response.data ?? error.message);
+        return thunkAPI.rejectWithValue(error.response?.data ?? error.message);
     }
 });
 
 
-
 const MAX_HISTORY = 100;
+
 const gpsDataSlice = createSlice({
     name: "gpsData",
     initialState: {
@@ -46,11 +125,13 @@ const gpsDataSlice = createSlice({
             })
             .addCase(fetchGpsData.fulfilled, (state, action) => {
                 state.loading = false;
-                state.gpsData = action.payload; // ✅ payload is already the array
+                state.gpsData = action.payload;
 
-                if (action.payload && Array.isArray(action.payload)) { // ✅
-                    action.payload.forEach((vehicle) => { // ✅
+                // Update local history
+                if (action.payload && Array.isArray(action.payload)) {
+                    action.payload.forEach((vehicle) => {
                         const imei = vehicle.imei;
+
                         if (!state.history[imei]) {
                             state.history[imei] = [];
                         }
@@ -87,12 +168,14 @@ const gpsDataSlice = createSlice({
             .addCase(fetchGpsData.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            // Handle Supabase save errors
+            .addCase(saveChangedVehiclesToSupabase.rejected, (state, action) => {
+                console.error('Supabase save failed:', action.payload);
+                state.error = action.payload;
             });
     },
 });
-
-
-
 
 export const { clearHistory, clearVehicleHistory } = gpsDataSlice.actions;
 export default gpsDataSlice.reducer;

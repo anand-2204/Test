@@ -63,7 +63,7 @@ const useMapRouting = (
                 .addTo(map);
         };
 
-        map.on("click", handleClick);
+        // map.on("click", handleClick);
 
         return () => map.off("click", handleClick);
     }, [selectedVehicle, mapRef, markersRef, destMarkerRef, routingControlRef]);

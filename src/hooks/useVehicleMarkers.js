@@ -35,7 +35,7 @@ const useVehicleMarkers = (
             if (!imei || isNaN(lat) || isNaN(lng)) return;
 
             const position = [lat, lng];
-            console.log("position", position)
+
             validPositions.push(position);
 
             const isSelected = selectedVehicle?.imei === imei;

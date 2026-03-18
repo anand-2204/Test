@@ -55,7 +55,7 @@ const InfoCard = ({ vehicle, isSelected, onClick }) => {
             <div className="info-card__divider" />
 
             {/* Row 2 — Speed | Ignition | Last Seen */}
-            <div className="info-card__stats">
+            {/* <div className="info-card__stats">
 
                 <div className="info-card__stat">
                     <p className="info-card__stat-label">SPEED</p>
@@ -87,7 +87,7 @@ const InfoCard = ({ vehicle, isSelected, onClick }) => {
                     </div>
                 </div>
 
-            </div>
+            </div> */}
         </div>
     );
 };

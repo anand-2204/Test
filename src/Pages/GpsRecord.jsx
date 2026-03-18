@@ -4,7 +4,6 @@ import MapView from '../components/map/MapView';
 import StatusBar from '../components/GpsTracking/StatusBar';
 import useVehicleData from '../hooks/useVehicleData';
 import useReverseGeocode from '../hooks/useReverseGeocode';
-// import VEHICLES from '../constants/vehicleData';
 import '../asset/css/GpsRecord.css';
 import { fetchGpsData } from '../globalContext/redux/Slice/GpsDataSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -35,8 +34,6 @@ const GpsRecords = () => {
   const dispatch = useDispatch();
   const { gpsData, loading, error, history } = useSelector((state) => state.gpsData)
 
-  //console.log("gpsdata==", gpsData)
-  //console.log("history==", history)
 
   useEffect(() => {
     dispatch(fetchGpsData());
@@ -78,6 +75,7 @@ const GpsRecords = () => {
                 <p className="gps-logo-subtitle">Live Vehicle Monitoring</p>
               </div>
             </div>
+
           </div>
 
 
@@ -88,6 +86,7 @@ const GpsRecords = () => {
               <Radio size={11} strokeWidth={2.5} />
               <span>LIVE</span>
             </div>
+
             <div className="gps-clock-block">
               <span className="gps-clock">{currentTime.toLocaleTimeString()}</span>
               <span className="gps-date">{currentTime.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
