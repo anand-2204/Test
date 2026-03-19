@@ -1,39 +1,27 @@
-import React, { useState } from 'react';
-import { Search, X } from 'lucide-react';
-import '../../asset/css/SearchBar.css';
+import React from 'react';
 
-const SearchBar = ({ search, setSearch }) => {
-    const [isFocused, setIsFocused] = useState(false);
-
-    return (
-        <div className="searchbar-wrapper">
-            <div className={`searchbar-container ${isFocused ? 'searchbar-container--focused' : ''}`}>
-                <Search
-                    size={15}
-                    strokeWidth={2.2}
-                    className="searchbar-icon"
-                />
-                <input
-                    type="text"
-                    placeholder="Search vehicle, plate, city..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    className="searchbar-input"
-                />
-                {search && (
-                    <button
-                        className="searchbar-clear"
-                        onClick={() => setSearch('')}
-                        title="Clear"
-                    >
-                        <X size={13} strokeWidth={2.5} />
-                    </button>
-                )}
-            </div>
+const SearchBar = ({ search, setSearch }) => (
+    <div className="sb-search">
+        <div className="sb-search__wrap">
+            <span className="sb-search__icon">🔍</span>
+            <input
+                className="sb-search__input"
+                type="text"
+                placeholder="Search vehicle or IMEI…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+            />
+            {search && (
+                <button
+                    className="sb-search__clear"
+                    onClick={() => setSearch('')}
+                    title="Clear search"
+                >
+                    ✕
+                </button>
+            )}
         </div>
-    );
-};
+    </div>
+);
 
 export default SearchBar;

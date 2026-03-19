@@ -33,6 +33,7 @@ export const fetchGpsData = createAsyncThunk('gps/fetchGpsData', async (_, thunk
             }
         );
 
+        // console.table(response.data.data);
         const vehicles = response.data.data;
 
         // Get current history from Redux state BEFORE reducer updates it
@@ -73,7 +74,7 @@ export const fetchGpsData = createAsyncThunk('gps/fetchGpsData', async (_, thunk
         }
 
         let lastSupabaseSave = null;
-        const SAVE_INTERVAL_MS = 2000; // 1 hour
+        const SAVE_INTERVAL_MS = 60 * 10 * 1000; // 10 minutes
 
         // Await dispatch so errors don't get silently lost
         if (changedVehicles.length > 0) {

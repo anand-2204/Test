@@ -52,6 +52,121 @@
     overflow: hidden;
 }
 
+/* Header */
+.an-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.an-header__left {}
+
+.an-header__eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.an-header__title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--text-primary);
+}
+
+.an-header__title span {
+    color: var(--accent);
+    text-shadow: 0 0 18px var(--accent);
+}
+
+.an-header__right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Live badge */
+.an-live {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--green);
+    font-family: var(--font-display);
+}
+
+.an-live__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+}
+
+/* Theme toggle */
+.an-theme-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.an-theme-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.an-theme-btn__icon {
+    font-size: 14px;
+}
+
+/* Tab bar */
+.an-tabs {
+    display: flex;
+    gap: 3px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+}
+
+.an-tabs__btn {
+    padding: 6px 14px;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    border: none;
+    font-family: var(--font-body);
+    letter-spacing: 0.1em;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.an-tabs__btn--active {
+    background: var(--accent);
+    color: #fff;
+}
+
 /* ════════════════════════════════
    NAVBAR
 ════════════════════════════════ */
@@ -388,10 +503,20 @@
    MAP WRAPPER
 ════════════════════════════════ */
 .gps-map-wrapper {
+
     position: relative;
     flex: 1;
+
     overflow: hidden;
-    background: #e8edf2;
+    padding: 40px;
+    overflow-y: auto;
+
+    background: #fff;
+
+
+
+
+
 }
 
 .gps-map-wrapper> :first-child {
